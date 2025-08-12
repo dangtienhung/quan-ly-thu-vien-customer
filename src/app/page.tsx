@@ -1,103 +1,171 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import {
+	BannerSection,
+	BookSection,
+	CategoriesSection,
+	HeroSection,
+	MediaSection,
+} from '@/features/home/components';
+import { useBooksByType, useLatestBooks } from '@/hooks/books';
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+const HomePage = () => {
+	// Fetch latest books (sách mới thêm)
+	const { data: latestBooks, isLoading: isLoadingLatest } = useLatestBooks({
+		limit: 5,
+	});
+
+	// Fetch physical books (sách giấy)
+	const { data: physicalBooks, isLoading: isLoadingPhysical } = useBooksByType(
+		'physical',
+		{
+			limit: 5,
+		}
+	);
+
+	// Fetch ebooks (sách điện tử)
+	const { data: ebooks, isLoading: isLoadingEbooks } = useBooksByType('ebook', {
+		limit: 5,
+	});
+
+	// Dữ liệu sách nói
+	const audioBooks = [
+		{
+			title: 'Cáo, Thỏ, Gà Trống',
+			image:
+				'https://storage.googleapis.com/a1aa/image/6e438c08-4078-4351-54ee-f6a44a1170c1.jpg',
+			category: 'Sách nói',
+			listens: '71.9 nghìn',
+			likes: '1',
+		},
+		{
+			title: 'Truyện Sự tích Trầu cau',
+			image:
+				'https://storage.googleapis.com/a1aa/image/f884f163-aef6-4084-f30d-02fdbfdc45aa.jpg',
+			category: 'Sách nói',
+			listens: '12 lượt nghe',
+			likes: '0',
+		},
+		{
+			title: 'Truyện cổ tích Tấm Cám',
+			image:
+				'https://storage.googleapis.com/a1aa/image/3a7d2aee-35ac-4e13-dd5e-25550514ccc2.jpg',
+			category: 'Sách nói',
+		},
+		{
+			title: 'Truyện Cây Khế',
+			image:
+				'https://storage.googleapis.com/a1aa/image/decc7df5-1abd-4914-6c88-5308de272531.jpg',
+			category: 'Sách nói',
+		},
+		{
+			title: 'Cô bé quàng khăn đỏ',
+			image:
+				'https://storage.googleapis.com/a1aa/image/48802e36-3b69-431a-c3df-539db8a3eed8.jpg',
+			category: 'Sách nói',
+		},
+	];
+
+	// Dữ liệu bài giảng điện tử
+	const lectures = [
+		{
+			title: 'Khám phá cung trăng',
+			image:
+				'https://storage.googleapis.com/a1aa/image/f58e4d61-73d5-41db-efe4-507ac14276e9.jpg',
+			category: 'Bài giảng điện tử',
+			views: '2.4 nghìn lượt',
+			likes: '0',
+		},
+		{
+			title: 'Sử dụng an toàn đồ dùng trong gia đình',
+			image:
+				'https://storage.googleapis.com/a1aa/image/f58e4d61-73d5-41db-efe4-507ac14276e9.jpg',
+			category: 'Bài giảng điện tử',
+			views: '3.4 nghìn lượt',
+			likes: '0',
+		},
+	];
+
+	// Dữ liệu video
+	const videos = [
+		{
+			title: 'Hai đường thẳng song song: Thuộc kiểm song song',
+			image:
+				'https://storage.googleapis.com/a1aa/image/c6f73c0e-4e72-46b2-98a1-f673070f1a7c.jpg',
+			category: 'Video',
+			views: '3.8k lượt xem',
+			likes: '0',
+		},
+		{
+			title: 'Lăng trụ đứng tam giác: Kỹ năng lắp thước ráp linh hoạt',
+			image:
+				'https://storage.googleapis.com/a1aa/image/c6f73c0e-4e72-46b2-98a1-f673070f1a7c.jpg',
+			category: 'Video',
+			views: '0',
+			likes: '0',
+		},
+		{
+			title: 'Hình hộp chữ nhật và hình lập phương: Bộ lịch vạn niên',
+			image:
+				'https://storage.googleapis.com/a1aa/image/c6f73c0e-4e72-46b2-98a1-f673070f1a7c.jpg',
+			category: 'Video',
+			views: '0',
+			likes: '0',
+		},
+		{
+			title: 'Tỉ lệ thức và dãy tỉ số bằng nhau: Thuốc thắng triểm mến',
+			image:
+				'https://storage.googleapis.com/a1aa/image/c6f73c0e-4e72-46b2-98a1-f673070f1a7c.jpg',
+			category: 'Video',
+			views: '0',
+			likes: '0',
+		},
+	];
+
+	// Transform API data to match BookSection component format
+	const transformBookData = (books: any[] | undefined) => {
+		return (
+			books?.map((book) => ({
+				title: book.title,
+				image: book.cover_image || '/placeholder-book.jpg',
+				category:
+					book.mainCategory?.name || book.authors?.[0]?.author_name || 'Sách',
+				listens: `${book.view} lượt xem`,
+				likes: '0', // API doesn't have likes field yet
+				slug: book.slug, // Add slug for navigation
+			})) || []
+		);
+	};
+
+	return (
+		<div>
+			<HeroSection />
+			<CategoriesSection />
+			<BookSection
+				title="Sách mới thêm"
+				books={transformBookData(latestBooks)}
+				isLoading={isLoadingLatest}
+			/>
+			<BannerSection />
+			<BookSection
+				title="Sách giấy"
+				books={transformBookData(physicalBooks?.data)}
+				isLoading={isLoadingPhysical}
+			/>
+			<BookSection
+				title="Sách điện tử"
+				books={transformBookData(ebooks?.data)}
+				isLoading={isLoadingEbooks}
+			/>
+			<BookSection title="Sách nói" books={audioBooks} />
+			<MediaSection title="Bài giảng điện tử" items={lectures} />
+			<MediaSection
+				title="Video"
+				items={videos}
+				gridCols="grid-cols-2 sm:grid-cols-4"
+			/>
+		</div>
+	);
+};
+
+export default HomePage;
