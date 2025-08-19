@@ -12,6 +12,7 @@ export enum AccountStatus {
 export interface User {
 	id: string;
 	username: string;
+	userCode?: string; // Mã sinh viên/nhân viên
 	email: string;
 	role: UserRole;
 	accountStatus: AccountStatus;

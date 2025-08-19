@@ -1,4 +1,5 @@
 import QueryClientProviders from '@/components/providers/query-client-provider';
+import { Toaster } from '@/components/ui/sonner';
 import RootLayoutShell from '@/layouts/root-layout';
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
@@ -28,7 +29,10 @@ export default function RootLayout({
 				suppressHydrationWarning
 			>
 				<QueryClientProviders>
-					<RootLayoutShell>{children}</RootLayoutShell>
+					<RootLayoutShell>
+						{children}
+						<Toaster />
+					</RootLayoutShell>
 				</QueryClientProviders>
 			</body>
 		</html>

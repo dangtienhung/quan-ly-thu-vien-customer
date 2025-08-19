@@ -5,7 +5,7 @@ import { useIsAuthenticated, useLoginDialog } from '@/hooks';
 import type { BookWithAuthors } from '@/types/books';
 import { Book, BookOpen, Eye, Heart, User } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 
 interface BookDetailHeroProps {
@@ -28,6 +28,9 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 	book,
 	onIncrementView,
 }) => {
+	const params = useParams();
+	const slug = params.slug as string;
+
 	const { isAuthenticated } = useIsAuthenticated();
 	const { openLoginDialog, setOnLoginSuccess } = useLoginDialog();
 	const router = useRouter();
@@ -46,8 +49,16 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 
 		// User is authenticated, proceed with reading
 		onIncrementView();
-		// Navigate to read book page
-		router.push(`/books/${book.slug}/view`);
+
+		if (book) {
+			if (book.book_type === 'ebook') {
+				// Navigate to ebook reading page
+				router.push(`/books/${slug}/view`);
+			} else if (book.book_type === 'physical') {
+				// Navigate to physical book registration page
+				router.push(`/books/${slug}/register`);
+			}
+		}
 	};
 
 	// Safe author names extraction
@@ -141,7 +152,9 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 								className="inline-flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-colors"
 							>
 								<BookOpen className="w-4 h-4" />
-								<span>ĐỌC SÁCH</span>
+								<span>
+									{book?.book_type === 'ebook' ? 'ĐỌC SÁCH' : 'ĐẶT MƯỢN'}
+								</span>
 							</Button>
 							<Button
 								variant="ghost"

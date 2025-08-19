@@ -11,14 +11,16 @@ import {
 	useBooksByCategory,
 	useIncrementBookView,
 } from '@/hooks/books';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 const BookDetailPage = () => {
 	const params = useParams();
+	const router = useRouter();
 	const slug = params.slug as string;
 
 	// Fetch book data
 	const { data: book, isLoading, error } = useBookBySlug(slug);
+	console.log('🚀 ~ BookDetailPage ~ book:', book);
 
 	// Fetch related books (same category)
 	const { data: relatedBooks } = useBooksByCategory(
@@ -28,6 +30,19 @@ const BookDetailPage = () => {
 
 	// Increment view count
 	const { incrementViewBySlug } = useIncrementBookView();
+
+	// Handle book type navigation
+	// useEffect(() => {
+	// 	if (book) {
+	// 		if (book.book_type === 'ebook') {
+	// 			// Navigate to ebook reading page
+	// 			router.push(`/books/${slug}/view`);
+	// 		} else if (book.book_type === 'physical') {
+	// 			// Navigate to physical book registration page
+	// 			router.push(`/books/${slug}/register`);
+	// 		}
+	// 	}
+	// }, [book, slug, router]);
 
 	const handleIncrementView = () => {
 		if (slug) {

@@ -1,7 +1,8 @@
 'use client';
 
+import NotificationDropdown from '@/components/ui/notification-dropdown';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLoginDialog } from '@/hooks';
+import { useLoginDialog, useNotifications } from '@/hooks';
 import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,6 +11,16 @@ import React, { useEffect, useRef, useState } from 'react';
 const Header: React.FC = () => {
 	const { user, isAuthenticated, logout } = useAuth();
 	const { openLoginDialog } = useLoginDialog();
+	const {
+		notifications,
+		markAsRead,
+		markAllAsRead,
+		unreadCount,
+		loading: notificationsLoading,
+		error: notificationsError,
+		refresh: refreshNotifications,
+	} = useNotifications();
+	console.log('🚀 ~ Header ~ notifications:', notifications);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +92,21 @@ const Header: React.FC = () => {
 						<i className="fas fa-search"></i>
 					</button>
 
+					{isAuthenticated && (
+						<>
+							{notificationsError && (
+								<div className="text-xs text-red-500 mr-2">
+									{notificationsError}
+								</div>
+							)}
+							<NotificationDropdown
+								notifications={notifications}
+								onMarkAsRead={markAsRead}
+								onMarkAllAsRead={markAllAsRead}
+							/>
+						</>
+					)}
+
 					{isAuthenticated ? (
 						<div className="relative" ref={dropdownRef}>
 							<button
@@ -101,7 +127,7 @@ const Header: React.FC = () => {
 							</button>
 
 							{isDropdownOpen && (
-								<div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+								<div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
 									<div className="px-4 py-2 border-b border-gray-100">
 										<p className="text-sm font-medium text-gray-900">
 											{user?.username}
