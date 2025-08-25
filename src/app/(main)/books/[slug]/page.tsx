@@ -3,7 +3,6 @@
 import {
 	BookDetailHero,
 	BookIntroduction,
-	CommentsSection,
 	RelatedBooks,
 } from '@/features/book-detail/components';
 import {
@@ -87,7 +86,7 @@ const BookDetailPage = () => {
 
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
 				<BookIntroduction book={book} />
-				<CommentsSection />
+				{/* <CommentsSection /> */}
 				<RelatedBooks books={filteredRelatedBooks} />
 			</main>
 		</div>

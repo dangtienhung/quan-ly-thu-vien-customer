@@ -1,16 +1,20 @@
 'use client';
 
-import NotificationDropdown from '@/components/ui/notification-dropdown';
-import { useAuth } from '@/contexts/AuthContext';
-import { useLoginDialog, useNotifications } from '@/hooks';
 import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLoginDialog, useNotifications } from '@/hooks';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import NotificationDropdown from '@/components/ui/notification-dropdown';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const Header: React.FC = () => {
 	const { user, isAuthenticated, logout } = useAuth();
 	const { openLoginDialog } = useLoginDialog();
+	const router = useRouter();
+
 	const {
 		notifications,
 		markAsRead,
@@ -19,10 +23,17 @@ const Header: React.FC = () => {
 		loading: notificationsLoading,
 		error: notificationsError,
 		refresh: refreshNotifications,
+		readerId,
 	} = useNotifications();
-	console.log('🚀 ~ Header ~ notifications:', notifications);
+
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [isMounted, setIsMounted] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	// Prevent hydration mismatch
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
 
 	// Close dropdown when clicking outside
 	useEffect(() => {
@@ -46,41 +57,58 @@ const Header: React.FC = () => {
 		setIsDropdownOpen(false);
 	};
 
+	// Don't render until mounted to prevent hydration mismatch
+	if (!isMounted) {
+		return (
+			<header className="border-b border-gray-300">
+				<div className="max-w-[1280px] mx-auto flex items-center justify-between py-2 px-4">
+					<div className="flex items-center space-x-2">
+						<div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+						<div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+					</div>
+					<div className="hidden sm:flex space-x-4">
+						<div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+						<div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+						<div className="h-4 w-28 bg-gray-200 rounded animate-pulse" />
+					</div>
+					<div className="w-20 h-8 bg-gray-200 rounded animate-pulse" />
+				</div>
+			</header>
+		);
+	}
+
 	return (
 		<header className="border-b border-gray-300">
-			<div className="max-w-[1280px] mx-auto flex items-center justify-between px-4 py-2 text-[10px] sm:text-xs">
-				<div className="flex items-center space-x-2">
-					<Image
-						alt="Logo trường THPT Chuyên Hà Nội - Amsterdam"
-						className="w-8 h-8 object-contain"
-						height={32}
-						src="https://storage.googleapis.com/a1aa/image/0583a14f-d17e-4985-f93c-dd1e62b6abfe.jpg"
-						width={32}
-						priority
-					/>
-					<div className="font-semibold text-[10px] sm:text-xs leading-none">
-						THPT CHUYÊN HÀ NỘI - AMSTERDAM
+			<div className="max-w-[1280px] mx-auto flex items-center justify-between py-2 px-4">
+				<Link href="/">
+					<div className="flex items-center space-x-2">
+						<Image
+							alt="Logo trường THPT Hoài Đức A"
+							className="w-8 h-8 object-contain"
+							height={32}
+							src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/537695210_1304240211495265_2418224581590370134_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=s2YVIhCZtSEQ7kNvwF2V05z&_nc_oc=AdmTeXWyuOiTxuQTzxwXlQcU-M6sIcHWgkbvWEmUgit6uGB4sNQZXZaFfVPMOOZdW04&_nc_zt=23&_nc_ht=scontent.fhan14-2.fna&_nc_gid=o8UOvFxQybsrwwYbR7UjjA&oh=00_AfVLGvH1B12OlfzIL21mqS4sbh6CIUYlFZY00E5Mrt5Cjw&oe=68AF11CD"
+							width={32}
+							priority
+						/>
+						<div className="font-semibold text-base leading-none">
+							THPT HOÀI ĐỨC A
+						</div>
 					</div>
-				</div>
+				</Link>
 
-				<nav className="hidden sm:flex space-x-4 text-[10px] sm:text-xs font-semibold">
-					<Link className="text-[#00B14F] hover:underline" href="/">
+				<nav className="hidden sm:flex space-x-6 text-base font-semibold">
+					<Link className="text-[#00B14F] " href="/">
 						Trang chủ
 					</Link>
-					<Link className="hover:underline" href="#">
+					<Link className="" href="#">
 						Tài liệu
 					</Link>
-					<Link className="hover:underline" href="#">
-						Giáo trình sách
-					</Link>
-					<Link className="hover:underline" href="#">
+
+					<Link className="" href="#">
 						Tin tức
 					</Link>
-					<Link className="hover:underline" href="#">
+					<Link className="" href="#">
 						Giới thiệu
-					</Link>
-					<Link className="hover:underline" href="#">
-						Liên hệ Website
 					</Link>
 				</nav>
 
@@ -92,7 +120,7 @@ const Header: React.FC = () => {
 						<i className="fas fa-search"></i>
 					</button>
 
-					{isAuthenticated && (
+					{isAuthenticated && readerId && (
 						<>
 							{notificationsError && (
 								<div className="text-xs text-red-500 mr-2">
@@ -111,12 +139,12 @@ const Header: React.FC = () => {
 						<div className="relative" ref={dropdownRef}>
 							<button
 								onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-								className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 rounded-full px-3 py-1 transition-colors"
+								className="flex items-center space-x-2 cursor-pointer bg-gray-100 hover:bg-gray-200 rounded-full px-3 py-1 transition-colors"
 							>
 								<div className="w-6 h-6 bg-[#00B14F] rounded-full flex items-center justify-center">
 									<User className="w-3 h-3 text-white" />
 								</div>
-								<span className="font-medium text-gray-700 max-w-[100px] truncate">
+								<span className="font-medium text-sm text-gray-700 truncate">
 									{user?.username || 'User'}
 								</span>
 								<ChevronDown
@@ -156,8 +184,10 @@ const Header: React.FC = () => {
 						</div>
 					) : (
 						<button
-							onClick={openLoginDialog}
-							className="bg-[#00B14F] text-white text-[10px] sm:text-xs font-semibold rounded-full px-4 py-1 hover:bg-[#009945] transition-colors"
+							onClick={() => {
+								router.push('/login');
+							}}
+							className="bg-[#00B14F] text-white cursor-pointer text-base font-semibold rounded-full px-4 py-1 hover:bg-[#009945] transition-colors"
 						>
 							Đăng nhập
 						</button>

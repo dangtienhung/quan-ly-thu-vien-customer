@@ -1,4 +1,3 @@
-import instance from '@/configs/instances';
 import type {
 	CreatePhysicalCopyDto,
 	PhysicalCopiesQueryParams,
@@ -8,6 +7,8 @@ import type {
 	SearchPhysicalCopiesParams,
 	UpdatePhysicalCopyDto,
 } from '@/types/physical-copies';
+
+import instance from '@/configs/instances';
 
 // API functions
 export const physicalCopiesApi = {
@@ -157,7 +158,19 @@ export const physicalCopiesApi = {
 		return response.data;
 	},
 
-	// 13. Delete physical copy by ID
+	// 13. Update physical copy status
+	updatePhysicalCopyStatus: async (
+		id: string,
+		data: { status: string; notes?: string }
+	): Promise<PhysicalCopyWithDetails> => {
+		const response = await instance.patch(
+			`/physical-copies/${id}/status`,
+			data
+		);
+		return response.data;
+	},
+
+	// 14. Delete physical copy by ID
 	deletePhysicalCopyById: async (id: string): Promise<void> => {
 		await instance.delete(`/physical-copies/${id}`);
 	},

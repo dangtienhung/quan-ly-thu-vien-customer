@@ -1,11 +1,12 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { useIsAuthenticated, useLoginDialog } from '@/hooks';
-import type { BookWithAuthors } from '@/types/books';
 import { Book, BookOpen, Eye, Heart, User } from 'lucide-react';
-import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
+
+import { Button } from '@/components/ui/button';
+import { useIsAuthenticated } from '@/hooks';
+import type { BookWithAuthors } from '@/types/books';
+import Image from 'next/image';
 import React from 'react';
 
 interface BookDetailHeroProps {
@@ -32,19 +33,17 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 	const slug = params.slug as string;
 
 	const { isAuthenticated } = useIsAuthenticated();
-	const { openLoginDialog, setOnLoginSuccess } = useLoginDialog();
 	const router = useRouter();
 
 	const handleReadBook = () => {
 		if (!isAuthenticated) {
-			// Set callback to increment view and navigate after successful login
-			setOnLoginSuccess(() => {
-				onIncrementView();
-				// Navigate to read book page after successful login
-				router.push(`/books/${book.slug}/view`);
-			});
-			openLoginDialog();
-			return; // Stop execution here - don't navigate
+			// Lưu URL hiện tại vào localStorage để redirect sau khi đăng nhập
+			const currentPath = window.location.pathname;
+			localStorage.setItem('redirectAfterLogin', currentPath);
+
+			// Redirect sang trang login
+			router.push('/login');
+			return;
 		}
 
 		// User is authenticated, proceed with reading

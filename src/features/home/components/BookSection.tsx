@@ -1,10 +1,11 @@
 'use client';
 
-import { useIncrementBookView } from '@/hooks/books';
 import { ChevronLeft, ChevronRight, Eye, Heart } from 'lucide-react';
+import React, { useRef } from 'react';
+
+import { useIncrementBookView } from '@/hooks/books';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useRef } from 'react';
 
 interface Book {
 	title: string;
@@ -99,7 +100,7 @@ const BookSection: React.FC<BookSectionProps> = ({
 									key={index}
 									href={book.slug ? `/books/${book.slug}` : '#'}
 									onClick={() => handleBookClick(book)}
-									className="w-[230px] sm:w-[260px] lg:w-[280px] xl:w-[300px] flex-none snap-start"
+									className="w-[230px] sm:w-[260px] lg:w-[280px] cursor-pointer xl:w-[300px] flex-none snap-start"
 								>
 									<div className="flex h-full flex-col space-y-2 cursor-pointer hover:opacity-80 transition-opacity">
 										<div

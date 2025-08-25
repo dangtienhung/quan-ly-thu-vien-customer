@@ -55,6 +55,11 @@ export interface CreateReservationDto {
 	expiry_date: string;
 	reader_notes?: string;
 	priority?: number;
+	physical_copy_id?: string;
+}
+
+export interface CreateMultipleReservationsDto {
+	reservations: CreateReservationDto[];
 }
 
 export interface UpdateReservationDto {

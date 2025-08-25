@@ -44,7 +44,7 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 4px;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -128,4 +128,18 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+}
+
+button {
+  cursor: pointer;
+}
+
+input, select, textarea, button {
+  height: 48px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  cursor: pointer;
 }

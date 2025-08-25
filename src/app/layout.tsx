@@ -1,9 +1,9 @@
+import './globals.css';
+
 import QueryClientProviders from '@/components/providers/query-client-provider';
 import { Toaster } from '@/components/ui/sonner';
-import RootLayoutShell from '@/layouts/root-layout';
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
-import './globals.css';
 
 const poppins = Poppins({
 	weight: ['300', '400', '500', '600', '700'],
@@ -29,10 +29,8 @@ export default function RootLayout({
 				suppressHydrationWarning
 			>
 				<QueryClientProviders>
-					<RootLayoutShell>
-						{children}
-						<Toaster />
-					</RootLayoutShell>
+					{children}
+					<Toaster />
 				</QueryClientProviders>
 			</body>
 		</html>

@@ -1,6 +1,6 @@
-import { reservationsApi } from '@/apis/reservations';
 import type {
 	CancelReservationDto,
+	CreateMultipleReservationsDto,
 	CreateReservationDto,
 	ExpiringSoonParams,
 	FulfillReservationDto,
@@ -9,6 +9,8 @@ import type {
 	UpdateReservationDto,
 } from '@/types/reservations';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { reservationsApi } from '@/apis/reservations';
 
 // Query keys
 export const reservationKeys = {
@@ -129,6 +131,20 @@ export const useCreateReservation = () => {
 
 	return useMutation({
 		mutationFn: (data: CreateReservationDto) => reservationsApi.create(data),
+		onSuccess: () => {
+			// Invalidate and refetch reservations lists
+			queryClient.invalidateQueries({ queryKey: reservationKeys.lists() });
+			queryClient.invalidateQueries({ queryKey: reservationKeys.stats() });
+		},
+	});
+};
+
+export const useCreateMultipleReservations = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (data: CreateMultipleReservationsDto) =>
+			reservationsApi.createMultiple(data),
 		onSuccess: () => {
 			// Invalidate and refetch reservations lists
 			queryClient.invalidateQueries({ queryKey: reservationKeys.lists() });

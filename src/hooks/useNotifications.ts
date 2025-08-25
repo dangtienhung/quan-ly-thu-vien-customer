@@ -1,17 +1,17 @@
 import {
 	Notification,
-	notificationApi,
 	NotificationFilters,
+	notificationApi,
 } from '@/apis/notifications';
+import { useEffect, useState } from 'react';
+
 import { readersApi } from '@/apis/readers';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect, useState } from 'react';
 
 export const useNotifications = (filters?: NotificationFilters) => {
 	const { user } = useAuth();
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [readerId, setReaderId] = useState<string | null>(null);
-	console.log('🚀 ~ useNotifications ~ notifications:', notifications);
 	console.log('🚀 ~ useNotifications ~ readerId:', readerId);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -33,10 +33,18 @@ export const useNotifications = (filters?: NotificationFilters) => {
 			try {
 				const reader = await readersApi.getReaderByUserId(user.id);
 				setReaderId(reader.id);
-			} catch (error) {
-				console.error('Error getting reader ID:', error);
-				setError('Không thể lấy thông tin độc giả');
-				setReaderId(null);
+			} catch (error: any) {
+				// Check if it's a 404 error (reader not found)
+				if (error?.response?.status === 404) {
+					// User doesn't have a reader yet, this is normal
+					setReaderId(null);
+					setError(null);
+				} else {
+					// Other errors should be logged
+					console.error('Error getting reader ID:', error);
+					setError('Không thể tải thông tin người đọc');
+					setReaderId(null);
+				}
 			}
 		};
 

@@ -1,7 +1,7 @@
-import instance from '@/configs/instances';
 import type {
 	AutoCancelExpiredResponse,
 	CancelReservationDto,
+	CreateMultipleReservationsDto,
 	CreateReservationDto,
 	ExpiringSoonParams,
 	FulfillReservationDto,
@@ -13,6 +13,8 @@ import type {
 	UpdateReservationDto,
 } from '@/types/reservations';
 
+import instance from '@/configs/instances';
+
 // API functions
 export const reservationsApi = {
 	// 1. Create new reservation
@@ -23,7 +25,25 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 2. Get reservations list with pagination
+	// 2. Create multiple reservations
+	createMultiple: async (
+		data: CreateMultipleReservationsDto
+	): Promise<{
+		created: ReservationWithDetails[];
+		failed: Array<{
+			index: number;
+			error: string;
+			data: any;
+		}>;
+		total: number;
+		successCount: number;
+		failureCount: number;
+	}> => {
+		const response = await instance.post('/reservations/bulk', data);
+		return response.data;
+	},
+
+	// 3. Get reservations list with pagination
 	getReservations: async (
 		params: ReservationsQueryParams = {}
 	): Promise<ReservationsResponse> => {
@@ -37,7 +57,7 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 3. Search reservations
+	// 4. Search reservations
 	searchReservations: async (
 		params: SearchReservationsParams
 	): Promise<ReservationsResponse> => {
@@ -52,7 +72,7 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 4. Get reservations by status
+	// 5. Get reservations by status
 	getReservationsByStatus: async (
 		status: string,
 		params: ReservationsQueryParams = {}
@@ -67,7 +87,7 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 5. Get reservations by reader
+	// 6. Get reservations by reader
 	getReservationsByReader: async (
 		readerId: string,
 		params: ReservationsQueryParams = {}
@@ -82,7 +102,7 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 6. Get reservations by book
+	// 7. Get reservations by book
 	getReservationsByBook: async (
 		bookId: string,
 		params: ReservationsQueryParams = {}
@@ -97,7 +117,7 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 7. Get expiring soon reservations
+	// 8. Get expiring soon reservations
 	getExpiringSoon: async (
 		params: ExpiringSoonParams = {}
 	): Promise<ReservationsResponse> => {
@@ -112,7 +132,7 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 8. Get expired reservations
+	// 9. Get expired reservations
 	getExpiredReservations: async (
 		params: ReservationsQueryParams = {}
 	): Promise<ReservationsResponse> => {
@@ -126,19 +146,19 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 9. Get reservations statistics
+	// 10. Get reservations statistics
 	getReservationsStats: async (): Promise<ReservationsStats> => {
 		const response = await instance.get('/reservations/stats');
 		return response.data;
 	},
 
-	// 10. Get reservation by ID
+	// 11. Get reservation by ID
 	getReservationById: async (id: string): Promise<ReservationWithDetails> => {
 		const response = await instance.get(`/reservations/${id}`);
 		return response.data;
 	},
 
-	// 11. Update reservation by ID
+	// 12. Update reservation by ID
 	updateReservationById: async (
 		id: string,
 		data: UpdateReservationDto
@@ -147,7 +167,7 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 12. Fulfill reservation
+	// 13. Fulfill reservation
 	fulfillReservation: async (
 		id: string,
 		data: FulfillReservationDto
@@ -156,7 +176,7 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 13. Cancel reservation
+	// 14. Cancel reservation
 	cancelReservation: async (
 		id: string,
 		data: CancelReservationDto
@@ -165,13 +185,13 @@ export const reservationsApi = {
 		return response.data;
 	},
 
-	// 14. Auto cancel expired reservations
+	// 15. Auto cancel expired reservations
 	autoCancelExpired: async (): Promise<AutoCancelExpiredResponse> => {
 		const response = await instance.post('/reservations/auto-cancel-expired');
 		return response.data;
 	},
 
-	// 15. Delete reservation by ID
+	// 16. Delete reservation by ID
 	deleteReservationById: async (id: string): Promise<void> => {
 		await instance.delete(`/reservations/${id}`);
 	},

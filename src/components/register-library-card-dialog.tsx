@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { AlertCircle, CreditCard } from 'lucide-react';
 import {
 	Dialog,
 	DialogContent,
@@ -8,14 +8,15 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
+
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
-import { useReaderTypes } from '@/hooks/reader-types';
-import { useCreateReader } from '@/hooks/readers';
-import { AlertCircle, CreditCard } from 'lucide-react';
-import { useState } from 'react';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCreateReader } from '@/hooks/readers';
+import { useReaderTypes } from '@/hooks/reader-types';
+import { useState } from 'react';
 import { z } from 'zod';
 
 interface RegisterLibraryCardDialogProps {
@@ -122,7 +123,7 @@ export const RegisterLibraryCardDialog = ({
 				cardExpiryDate: '1969-12-31', // Default date for inactive card (after issue date)
 			});
 
-			toast.success('Đăng ký thẻ thư viện thành công!');
+			toast.success('Đăng ký thẻ thư viện thành công! Vui lòng chờ phê duyệt.');
 			setOpen(false);
 			setFormData({
 				fullName: user?.username || '',
@@ -185,6 +186,7 @@ export const RegisterLibraryCardDialog = ({
 								}
 								placeholder="Nhập họ tên đầy đủ"
 								className="w-full"
+								disabled
 							/>
 							{getFieldError('fullName') && (
 								<p className="text-sm text-red-600">

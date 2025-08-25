@@ -18,7 +18,7 @@ instance.interceptors.request.use(
 		}
 		return config;
 	},
-	(error) => Promise.reject(new Error(error?.message || 'Request error'))
+	(error) => Promise.reject(error)
 );
 
 // Response interceptor
@@ -33,7 +33,7 @@ instance.interceptors.response.use(
 			// Chuyển hướng về trang login
 			// window.location.href = '/login';
 		}
-		return Promise.reject(new Error(error?.message || 'Response error'));
+		return Promise.reject(error);
 	}
 );
 

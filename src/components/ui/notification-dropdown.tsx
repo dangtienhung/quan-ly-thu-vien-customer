@@ -1,8 +1,9 @@
 'use client';
 
-import { Notification } from '@/apis/notifications';
 import { Bell, Check } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+
+import { Notification } from '@/apis/notifications';
 
 interface NotificationDropdownProps {
 	notifications?: Notification[];
@@ -68,7 +69,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 		<div className="relative" ref={dropdownRef}>
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+				className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
 				aria-label="Thông báo"
 			>
 				<Bell className="w-5 h-5" />

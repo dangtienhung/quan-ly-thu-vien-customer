@@ -1,10 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
-import { useIsAuthenticated } from '@/hooks';
-import { useBorrowRecordsByReader } from '@/hooks/borrow-records';
-import { useReaderByUserId } from '@/hooks/readers';
 import {
 	AlertCircle,
 	Book,
@@ -18,10 +13,16 @@ import {
 	User,
 	XCircle,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { useBorrowRecordsByReader } from '@/hooks/borrow-records';
+import { useIsAuthenticated } from '@/hooks';
+import { useReaderByUserId } from '@/hooks/readers';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 interface ReadingHistory {
 	id: string;
@@ -150,7 +151,7 @@ const ProfilePage = () => {
 		<div className="min-h-screen bg-gray-50">
 			{/* Header */}
 			<div className="bg-white border-b border-gray-200">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+				<div className="max-w-7xl mx-auto py-6">
 					<div className="flex items-center justify-between">
 						<h1 className="text-2xl font-bold text-gray-900">Trang cá nhân</h1>
 						<Button
@@ -165,7 +166,7 @@ const ProfilePage = () => {
 				</div>
 			</div>
 
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<div className="max-w-7xl mx-auto py-8">
 				<div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 					{/* Sidebar */}
 					<div className="lg:col-span-1">

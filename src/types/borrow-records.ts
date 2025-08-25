@@ -43,7 +43,8 @@ export type BorrowStatus =
 	| 'borrowed'
 	| 'returned'
 	| 'overdue'
-	| 'renewed';
+	| 'renewed'
+	| 'cancelled';
 
 export interface CreateBorrowRecordDto {
 	reader_id: string;
@@ -89,6 +90,7 @@ export interface BorrowRecordsStats {
 	returned: number;
 	overdue: number;
 	renewed: number;
+	cancelled: number;
 	byMonth: Array<{
 		month: string;
 		count: number;
