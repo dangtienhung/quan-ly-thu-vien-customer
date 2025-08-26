@@ -1,8 +1,7 @@
-import instance from '@/configs/instances';
 import type {
 	CardExpiryCheck,
 	CreateReaderDto,
-	ExpiringSoonParams,
+	ReaderExpiringSoonParams,
 	ReaderWithDetails,
 	ReadersQueryParams,
 	ReadersResponse,
@@ -10,6 +9,8 @@ import type {
 	SearchReadersParams,
 	UpdateReaderDto,
 } from '@/types/readers';
+
+import instance from '@/configs/instances';
 
 // API functions
 export const readersApi = {
@@ -62,7 +63,7 @@ export const readersApi = {
 
 	// 5. Get expiring soon cards
 	getExpiringSoon: async (
-		params: ExpiringSoonParams = {}
+		params: ReaderExpiringSoonParams = {}
 	): Promise<ReadersResponse> => {
 		const queryParams = new URLSearchParams();
 		if (params.days) queryParams.append('days', params.days.toString());

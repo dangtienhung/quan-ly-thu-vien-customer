@@ -7,7 +7,6 @@ export * from './queries/uploads';
 export * from './auth';
 
 // Export library management hooks
-export * from './books';
 export * from './borrow-records';
 export * from './fines';
 export * from './physical-copies';
@@ -18,6 +17,7 @@ export * from './reservations';
 
 // Export other hooks
 export { useLoginDialog } from '@/components/auth/AuthProvider';
+export * from './queries/books';
 export * from './use-debounce';
 export * from './use-ref-size';
 export * from './use-screensize';

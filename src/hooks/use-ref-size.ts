@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
-const useRefSize = () => {
-	const ref = useRef(null);
+const useRefSize = <T extends HTMLElement = HTMLDivElement>() => {
+	const ref = useRef<T>(null);
 	const [size, setSize] = useState({ width: 0, height: 0 });
 
 	const handleResize = () => {

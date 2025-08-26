@@ -1,13 +1,14 @@
-import { readersApi } from '@/apis/readers';
 import type {
 	CreateReaderDto,
-	ExpiringSoonParams,
+	ReaderExpiringSoonParams,
 	ReadersQueryParams,
 	RenewCardDto,
 	SearchReadersParams,
 	UpdateReaderDto,
 } from '@/types/readers';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { readersApi } from '@/apis/readers';
 
 // Query keys
 export const readerKeys = {
@@ -19,7 +20,7 @@ export const readerKeys = {
 		[...readerKeys.all, 'search', params] as const,
 	expiredCards: (params: ReadersQueryParams) =>
 		[...readerKeys.all, 'expired-cards', params] as const,
-	expiringSoon: (params: ExpiringSoonParams) =>
+	expiringSoon: (params: ReaderExpiringSoonParams) =>
 		[...readerKeys.all, 'expiring-soon', params] as const,
 	byType: (readerTypeId: string, params: ReadersQueryParams) =>
 		[...readerKeys.all, 'type', readerTypeId, params] as const,
@@ -59,7 +60,7 @@ export const useExpiredCards = (params: ReadersQueryParams = {}) => {
 	});
 };
 
-export const useExpiringSoon = (params: ExpiringSoonParams = {}) => {
+export const useExpiringSoon = (params: ReaderExpiringSoonParams = {}) => {
 	return useQuery({
 		queryKey: readerKeys.expiringSoon(params),
 		queryFn: () => readersApi.getExpiringSoon(params),

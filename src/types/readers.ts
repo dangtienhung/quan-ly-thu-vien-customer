@@ -69,7 +69,7 @@ export interface SearchReadersParams {
 	limit?: number;
 }
 
-export interface ExpiringSoonParams {
+export interface ReaderExpiringSoonParams {
 	days?: number;
 	page?: number;
 	limit?: number;

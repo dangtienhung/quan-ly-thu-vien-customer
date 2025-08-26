@@ -1,13 +1,14 @@
+import { Footer, Header } from './components';
+
 import { AuthProvider } from '@/components/auth';
 import React from 'react';
-import { Footer, Header } from './components';
 
 const RootLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 	return (
 		<AuthProvider>
-			<div className="bg-white text-gray-900">
+			<div className="bg-white text-gray-900 min-h-screen flex flex-col">
 				<Header />
-				<main>{children}</main>
+				<main className="flex-1">{children}</main>
 				<Footer />
 			</div>
 		</AuthProvider>

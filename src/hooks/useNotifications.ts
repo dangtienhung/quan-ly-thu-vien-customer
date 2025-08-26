@@ -12,7 +12,6 @@ export const useNotifications = (filters?: NotificationFilters) => {
 	const { user } = useAuth();
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [readerId, setReaderId] = useState<string | null>(null);
-	console.log('🚀 ~ useNotifications ~ readerId:', readerId);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [pagination, setPagination] = useState({

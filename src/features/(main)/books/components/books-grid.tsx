@@ -1,0 +1,175 @@
+import {
+	Pagination,
+	PaginationContent,
+	PaginationEllipsis,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from '@/components/ui/pagination';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { useBooks } from '@/hooks';
+import { BookOpen } from 'lucide-react';
+import { BookCard } from './book-card';
+
+export function BooksGrid() {
+	const router = useRouter();
+	const params = useSearchParams();
+	const category = params.get('category') || 'all';
+	const page = parseInt(params.get('page') || '1');
+	const limit = parseInt(params.get('limit') || '12');
+
+	const {
+		data: booksResponse,
+		isLoading,
+		isError,
+	} = useBooks({
+		page,
+		limit,
+		category_id: category === 'all' ? undefined : category,
+	});
+
+	const books = booksResponse?.data || [];
+	const pagination = booksResponse?.pagination;
+
+	const handlePageChange = (newPage: number) => {
+		const searchParams = new URLSearchParams(params.toString());
+		searchParams.set('page', newPage.toString());
+		router.push(`/books?${searchParams.toString()}`);
+	};
+
+	if (isLoading) {
+		return (
+			<div className="space-y-6">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+					{Array.from({ length: 8 }).map((_, index) => (
+						<div key={index} className="space-y-3">
+							<div className="aspect-[3/4] bg-gray-200 rounded-lg animate-pulse" />
+							<div className="space-y-2">
+								<div className="h-4 bg-gray-200 rounded animate-pulse" />
+								<div className="h-3 bg-gray-200 rounded w-2/3 animate-pulse" />
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	}
+
+	if (isError) {
+		return (
+			<div className="text-center py-12">
+				<BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+				<h3 className="text-lg font-medium text-gray-900 mb-2">
+					Đã xảy ra lỗi
+				</h3>
+				<p className="text-gray-600">
+					Không thể tải danh sách sách. Vui lòng thử lại sau.
+				</p>
+			</div>
+		);
+	}
+
+	if (books.length === 0) {
+		return (
+			<div className="text-center py-12">
+				<BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+				<h3 className="text-lg font-medium text-gray-900 mb-2">
+					Không tìm thấy sách
+				</h3>
+				<p className="text-gray-600">
+					Thử thay đổi từ khóa tìm kiếm hoặc chọn danh mục khác
+				</p>
+			</div>
+		);
+	}
+
+	return (
+		<div className="space-y-6">
+			{/* Books Grid */}
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+				{books.map((book) => (
+					<BookCard key={book.id} book={book} />
+				))}
+			</div>
+
+			{/* Pagination */}
+			{pagination && pagination.totalPages > 1 && (
+				<Pagination>
+					<PaginationContent>
+						{/* Previous Button */}
+						<PaginationItem>
+							<PaginationPrevious
+								href="#"
+								onClick={(e) => {
+									e.preventDefault();
+									if (page > 1) {
+										handlePageChange(page - 1);
+									}
+								}}
+								className={page <= 1 ? 'pointer-events-none opacity-50' : ''}
+							/>
+						</PaginationItem>
+
+						{/* Page Numbers */}
+						{Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
+							(pageNum) => {
+								// Show first page, last page, current page, and pages around current
+								const shouldShow =
+									pageNum === 1 ||
+									pageNum === pagination.totalPages ||
+									(pageNum >= page - 1 && pageNum <= page + 1);
+
+								if (!shouldShow) {
+									// Show ellipsis
+									if (pageNum === page - 2 || pageNum === page + 2) {
+										return (
+											<PaginationItem key={`ellipsis-${pageNum}`}>
+												<PaginationEllipsis />
+											</PaginationItem>
+										);
+									}
+									return null;
+								}
+
+								return (
+									<PaginationItem key={pageNum}>
+										<PaginationLink
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												handlePageChange(pageNum);
+											}}
+											isActive={pageNum === page}
+										>
+											{pageNum}
+										</PaginationLink>
+									</PaginationItem>
+								);
+							}
+						)}
+
+						{/* Next Button */}
+						<PaginationItem>
+							<PaginationNext
+								href="#"
+								onClick={(e) => {
+									e.preventDefault();
+									if (page < pagination.totalPages) {
+										handlePageChange(page + 1);
+									}
+								}}
+								className={
+									page >= pagination.totalPages
+										? 'pointer-events-none opacity-50'
+										: ''
+								}
+							/>
+						</PaginationItem>
+					</PaginationContent>
+				</Pagination>
+			)}
+		</div>
+	);
+}

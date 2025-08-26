@@ -73,6 +73,14 @@ export interface NotificationFilters {
 export const notificationApi = {
 	// ===== ADMIN ENDPOINTS =====
 
+	// Admin tạo thông báo mới
+	createNotification: async (
+		data: CreateNotificationRequest
+	): Promise<Notification> => {
+		const response = await instance.post('/notifications', data);
+		return response.data;
+	},
+
 	// Admin gửi thông báo nhắc nhở
 	sendReminders: async (
 		data: SendReminderRequest
