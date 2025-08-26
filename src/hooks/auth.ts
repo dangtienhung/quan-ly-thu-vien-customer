@@ -1,38 +1,41 @@
-import { authApi } from '@/apis/auth';
-import { useAuth } from '@/contexts/AuthContext';
-import type {
+import {
 	ChangePasswordRequest,
 	ForgotPasswordRequest,
 	LoginRequest,
 	ResetPasswordRequest,
 } from '@/types/auth';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
-// Hook for login functionality
+import { authApi } from '@/apis/auth';
+import { useAuth } from './use-auth';
+
+interface LoginResult {
+	success: boolean;
+	error?: string;
+}
+
 export const useLogin = () => {
-	const { login, isLoading, error, clearError } = useAuth();
+	const { login, isLoggingIn, loginError } = useAuth();
+	const [error, setError] = useState<string | null>(null);
 
-	const handleLogin = useCallback(
-		async (credentials: LoginRequest) => {
-			try {
-				clearError();
-				await login(credentials);
-				return { success: true };
-			} catch (error) {
-				return {
-					success: false,
-					error: error instanceof Error ? error.message : 'Đăng nhập thất bại',
-				};
-			}
-		},
-		[login, clearError]
-	);
+	const handleLogin = async (
+		credentials: LoginRequest
+	): Promise<LoginResult> => {
+		try {
+			setError(null);
+			await login(credentials);
+			return { success: true };
+		} catch (err: any) {
+			const errorMessage = err?.response?.data?.message || 'Đăng nhập thất bại';
+			setError(errorMessage);
+			return { success: false, error: errorMessage };
+		}
+	};
 
 	return {
 		login: handleLogin,
-		isLoading,
-		error,
-		clearError,
+		isLoading: isLoggingIn,
+		error: error || (loginError as any)?.message,
 	};
 };
 
@@ -122,11 +125,10 @@ export const useResetPassword = () => {
 
 // Hook to check if user is authenticated
 export const useIsAuthenticated = () => {
-	const { isAuthenticated, isLoading } = useAuth();
+	const { isAuthenticated } = useAuth();
 
 	return {
 		isAuthenticated,
-		isLoading,
 	};
 };
 

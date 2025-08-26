@@ -154,8 +154,8 @@ export default function LoginPage() {
 
 						<Button
 							type="submit"
-							disabled={isLoading || !form.formState.isValid}
-							className="w-full h-12 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 rounded !h-12"
+							disabled={isLoading}
+							className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 rounded !h-12"
 						>
 							{isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
 						</Button>

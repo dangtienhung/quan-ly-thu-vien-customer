@@ -2,17 +2,16 @@
 
 import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { useLoginDialog, useNotifications } from '@/hooks';
 
+import NotificationDropdown from '@/components/ui/notification-dropdown';
+import { useNotifications } from '@/hooks';
+import { useAuth } from '@/hooks/use-auth';
 import Image from 'next/image';
 import Link from 'next/link';
-import NotificationDropdown from '@/components/ui/notification-dropdown';
-import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
 const Header: React.FC = () => {
 	const { user, isAuthenticated, logout } = useAuth();
-	const { openLoginDialog } = useLoginDialog();
 	const router = useRouter();
 
 	const {

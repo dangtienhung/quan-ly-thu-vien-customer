@@ -4,7 +4,7 @@ import { Book, BookOpen, Eye, Heart, User } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
-import { useIsAuthenticated } from '@/hooks';
+import { useAuthStore } from '@/stores/auth-store';
 import type { BookWithAuthors } from '@/types/books';
 import Image from 'next/image';
 import React from 'react';
@@ -32,7 +32,7 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 	const params = useParams();
 	const slug = params.slug as string;
 
-	const { isAuthenticated } = useIsAuthenticated();
+	const { isAuthenticated } = useAuthStore();
 	const router = useRouter();
 
 	const handleReadBook = () => {

@@ -16,6 +16,7 @@ export interface Book {
 	main_category_id?: string;
 	createdAt: string;
 	updatedAt: string;
+	category_id: string;
 }
 
 export interface BookWithAuthors extends Book {

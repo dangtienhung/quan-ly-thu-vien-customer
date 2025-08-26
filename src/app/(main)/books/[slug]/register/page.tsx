@@ -7,27 +7,27 @@ import {
 	PageHeader,
 	RegistrationForm,
 } from '@/features/(main)/books/[slug]/register/components';
-import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { RegisterLibraryCardDialog } from '@/components/register-library-card-dialog';
-import { User } from 'lucide-react';
 import { borrowRecordsApi } from '@/apis/borrow-records';
 import { physicalCopiesApi } from '@/apis/physical-copies';
-import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
-import { useAvailablePhysicalCopiesByBook } from '@/hooks/physical-copies';
+import { RegisterLibraryCardDialog } from '@/components/register-library-card-dialog';
 import { useBookBySlug } from '@/hooks/books';
-import { useCreateReservation } from '@/hooks/reservations';
-import { useQueryClient } from '@tanstack/react-query';
+import { useAvailablePhysicalCopiesByBook } from '@/hooks/physical-copies';
 import { useReaderByUserId } from '@/hooks/readers';
+import { useCreateReservation } from '@/hooks/reservations';
+import { useAuthStore } from '@/stores/auth-store';
+import { useQueryClient } from '@tanstack/react-query';
+import { User } from 'lucide-react';
+import { toast } from 'sonner';
 
 const PhysicalBookRegistrationPage = () => {
 	const params = useParams();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const slug = params.slug as string;
-	const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+	const { user, isAuthenticated } = useAuthStore();
 
 	// Fetch book data
 	const {
@@ -52,11 +52,11 @@ const PhysicalBookRegistrationPage = () => {
 
 	// Check if user is authenticated
 	useEffect(() => {
-		if (!authLoading && !isAuthenticated) {
+		if (!isAuthenticated) {
 			toast.error('Bạn cần đăng nhập để mượn sách');
 			router.push('/login');
 		}
-	}, [authLoading, isAuthenticated, router]);
+	}, [isAuthenticated, router]);
 
 	// Check if book is physical
 	useEffect(() => {
@@ -67,7 +67,7 @@ const PhysicalBookRegistrationPage = () => {
 	}, [book, slug, router]);
 
 	// Loading state
-	if (authLoading || bookLoading) {
+	if (bookLoading) {
 		return <LoadingState />;
 	}
 

@@ -12,7 +12,11 @@ const instance = axios.create({
 instance.interceptors.request.use(
 	(config) => {
 		// Thêm token vào header nếu cần
-		const token = localStorage.getItem('auth_token');
+		const accessToken = JSON.parse(
+			localStorage.getItem('auth-storage') || '{}'
+		);
+		const token = accessToken.state.token;
+
 		if (token) {
 			config.headers['Authorization'] = `Bearer ${token}`;
 		}

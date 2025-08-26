@@ -1,4 +1,3 @@
-import { booksApi } from '@/apis/books';
 import type {
 	BooksQueryParams,
 	CreateBookDto,
@@ -8,6 +7,8 @@ import type {
 	UpdateBookViewDto,
 } from '@/types/books';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { booksApi } from '@/apis/books';
 
 // Query keys
 export const bookKeys = {
@@ -27,11 +28,15 @@ export const bookKeys = {
 };
 
 // Hooks for getting books
-export const useBooks = (params: BooksQueryParams = {}) => {
+export const useBooks = (
+	params: BooksQueryParams = {},
+	enabled: boolean = true
+) => {
 	return useQuery({
 		queryKey: bookKeys.list(params),
 		queryFn: () => booksApi.getBooks(params),
 		staleTime: 5 * 60 * 1000, // 5 minutes
+		enabled,
 	});
 };
 
@@ -238,9 +243,10 @@ export const useBooksByType = (
 // Hook for getting books by category
 export const useBooksByCategory = (
 	categoryId: string,
-	params: Omit<BooksQueryParams, 'category_id'> = {}
+	params: Omit<BooksQueryParams, 'category_id'> = {},
+	enabled: boolean = true
 ) => {
-	return useBooks({ ...params, category_id: categoryId });
+	return useBooks({ ...params, category_id: categoryId }, enabled);
 };
 
 // Hook for getting books by main category

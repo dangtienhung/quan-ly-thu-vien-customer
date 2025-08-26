@@ -1,17 +1,18 @@
 'use client';
 
+import { Book, Heart, Search, User } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/contexts/AuthContext';
-import { useIsAuthenticated, useLoginDialog } from '@/hooks';
-import { Book, Heart, Search, User } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLoginDialog } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const Navbar = () => {
 	const { user, logout } = useAuth();
-	const { isAuthenticated } = useIsAuthenticated();
+	const { isAuthenticated } = useAuth();
 	const { openLoginDialog } = useLoginDialog();
 	const router = useRouter();
 	const [searchQuery, setSearchQuery] = useState('');

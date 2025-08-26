@@ -20,7 +20,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBorrowRecordsByReader } from '@/hooks/borrow-records';
-import { useIsAuthenticated } from '@/hooks';
 import { useReaderByUserId } from '@/hooks/readers';
 import { useRouter } from 'next/navigation';
 
@@ -50,7 +49,7 @@ interface FavoriteBook {
 
 const ProfilePage = () => {
 	const { user, logout } = useAuth();
-	const { isAuthenticated } = useIsAuthenticated();
+	const { isAuthenticated } = useAuth();
 	const router = useRouter();
 	const [activeTab, setActiveTab] = useState<
 		'profile' | 'history' | 'favorites' | 'borrowings'

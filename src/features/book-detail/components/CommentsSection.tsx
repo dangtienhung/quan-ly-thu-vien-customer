@@ -1,9 +1,11 @@
 'use client';
 
+import { MessageCircle, Send, User } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useIsAuthenticated, useLoginDialog } from '@/hooks';
-import { MessageCircle, Send, User } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useLoginDialog } from '@/hooks';
 import { useState } from 'react';
 
 interface Comment {
@@ -17,7 +19,7 @@ interface Comment {
 }
 
 const CommentsSection: React.FC = () => {
-	const { isAuthenticated } = useIsAuthenticated();
+	const { isAuthenticated } = useAuth();
 	const { openLoginDialog } = useLoginDialog();
 	const [comment, setComment] = useState('');
 	const [comments, setComments] = useState<Comment[]>([]);

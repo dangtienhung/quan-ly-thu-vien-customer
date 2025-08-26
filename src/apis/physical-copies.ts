@@ -79,7 +79,8 @@ export const physicalCopiesApi = {
 		if (params.limit) queryParams.append('limit', params.limit.toString());
 
 		const response = await instance.get(
-			`/physical-copies/book/${bookId}/available?${queryParams.toString()}`
+			`/physical-copies/book/${bookId}/available`,
+			{ params: queryParams }
 		);
 		return response.data;
 	},
