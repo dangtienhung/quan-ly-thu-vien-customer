@@ -17,7 +17,8 @@ export default function BooksPage() {
 	};
 
 	const handleClearFilter = () => {
-		// This will be handled by URL parameters now
+		// Clear search input when filter is cleared
+		setSearchQuery('');
 	};
 
 	return (
@@ -43,7 +44,7 @@ export default function BooksPage() {
 					/>
 
 					{/* Results Info */}
-					<ResultsInfo />
+					<ResultsInfo onClearSearch={handleClearFilter} />
 
 					{/* Books Grid */}
 					<BooksGrid />

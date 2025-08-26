@@ -3,9 +3,9 @@
 import { ChevronLeft, ChevronRight, Eye, Heart } from 'lucide-react';
 import React, { useRef } from 'react';
 
-import { useIncrementBookView } from '@/hooks/books';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useIncrementBookView } from '@/hooks/books';
 
 interface Book {
 	title: string;
@@ -22,12 +22,14 @@ interface BookSectionProps {
 	books: Book[];
 	gridCols?: string;
 	isLoading?: boolean;
+	href?: string; // Add href prop for external navigation
 }
 
 const BookSection: React.FC<BookSectionProps> = ({
 	title,
 	books,
 	isLoading = false,
+	href,
 }) => {
 	const sliderRef = useRef<HTMLDivElement>(null);
 	const { incrementViewBySlug } = useIncrementBookView();
@@ -79,7 +81,7 @@ const BookSection: React.FC<BookSectionProps> = ({
 				<h3 className="font-semibold text-base sm:text-lg">{title}</h3>
 				<Link
 					className="text-green-600 text-xs sm:text-sm font-semibold hover:underline"
-					href="#"
+					href={href || '#'}
 				>
 					Xem tất cả &gt;
 				</Link>

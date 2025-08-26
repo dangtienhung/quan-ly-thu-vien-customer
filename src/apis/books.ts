@@ -1,14 +1,15 @@
-import instance from '@/configs/instances';
 import type {
+	BookWithAuthors,
 	BooksQueryParams,
 	BooksResponse,
-	BookWithAuthors,
 	CreateBookDto,
 	LatestBooksParams,
 	SearchBooksParams,
 	UpdateBookDto,
 	UpdateBookViewDto,
 } from '@/types/books';
+
+import instance from '@/configs/instances';
 
 // API functions
 export const booksApi = {
@@ -20,16 +21,9 @@ export const booksApi = {
 
 	// 2. Get books list with pagination and filters
 	getBooks: async (params: BooksQueryParams = {}): Promise<BooksResponse> => {
-		const queryParams = new URLSearchParams();
-		if (params.page) queryParams.append('page', params.page.toString());
-		if (params.limit) queryParams.append('limit', params.limit.toString());
-		if (params.type) queryParams.append('type', params.type);
-		if (params.main_category_id)
-			queryParams.append('main_category_id', params.main_category_id);
-		if (params.category_id)
-			queryParams.append('category_id', params.category_id);
-
-		const response = await instance.get(`/books?${queryParams.toString()}`);
+		const response = await instance.get(`/books`, {
+			params,
+		});
 		return response.data;
 	},
 

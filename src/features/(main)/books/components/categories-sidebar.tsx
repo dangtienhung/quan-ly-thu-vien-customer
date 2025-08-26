@@ -1,22 +1,47 @@
 'use client';
 
-import { BookOpen, Filter } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { BookOpen, Filter } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { useAllBookCategories } from '@/hooks/book-categories';
+import { useQueryParams } from '@/hooks/useQueryParams';
+import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 export function CategoriesSidebar() {
 	const router = useRouter();
-	const params = useSearchParams();
-	const category = params.get('category') || 'all';
+	const params = useQueryParams();
+
+	const category = params.category || 'all';
+
+	const paramBook = {
+		page: params.page ? parseInt(params.page) : 1,
+		limit: params.limit ? parseInt(params.limit) : 12,
+		main_category_id: params.category === 'all' ? undefined : params.category,
+		type:
+			params.type === 'all' ? undefined : (params.type as 'physical' | 'ebook'),
+		q: params.q,
+	};
 
 	const { bookCategories, isLoading, isError } = useAllBookCategories();
 
 	const handleCategoryChange = (categoryId: string) => {
-		router.push(`/books?category=${categoryId}&page=1`);
+		const params = new URLSearchParams();
+
+		// Add all current params
+		Object.entries(paramBook).forEach(([key, value]) => {
+			if (value !== undefined) {
+				params.set(key, String(value));
+			}
+		});
+
+		// Add category param
+		params.set('category', categoryId);
+
+		// Reset to page 1 when changing category
+		params.set('page', '1');
+
+		router.push(`/books?${params.toString()}`);
 	};
 
 	return (
@@ -43,9 +68,9 @@ export function CategoriesSidebar() {
 							<BookOpen className="h-4 w-4" />
 							<span className="font-medium">Tất cả sách</span>
 						</div>
-						<Badge variant="secondary" className="text-xs">
+						{/* <Badge variant="secondary" className="text-xs">
 							{bookCategories?.length || 0}
-						</Badge>
+						</Badge> */}
 					</button>
 
 					{/* Loading state */}
@@ -92,9 +117,9 @@ export function CategoriesSidebar() {
 									<BookOpen className="h-4 w-4" />
 									<span className="font-medium">{categoryItem.name}</span>
 								</div>
-								<Badge variant="secondary" className="text-xs">
+								{/* <Badge variant="secondary" className="text-xs">
 									{categoryItem.children?.length || 0}
-								</Badge>
+								</Badge> */}
 							</button>
 						))}
 				</CardContent>

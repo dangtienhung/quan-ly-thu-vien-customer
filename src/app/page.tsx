@@ -53,17 +53,20 @@ const HomePage = () => {
 					title="Sách mới thêm"
 					books={transformBookData(latestBooks)}
 					isLoading={isLoadingLatest}
+					href="/books"
 				/>
 				<BannerSection />
 				<BookSection
 					title="Sách giấy"
 					books={transformBookData(physicalBooks?.data)}
 					isLoading={isLoadingPhysical}
+					href="/books?type=physical"
 				/>
 				<BookSection
 					title="Sách điện tử"
 					books={transformBookData(ebooks?.data)}
 					isLoading={isLoadingEbooks}
+					href="/books?type=ebook"
 				/>
 			</div>
 		</RootLayoutShell>

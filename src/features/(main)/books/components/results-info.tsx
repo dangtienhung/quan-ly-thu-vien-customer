@@ -3,7 +3,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useGetBookCategoryDetail } from '@/hooks/book-categories/use-get-book-category-detail';
 
-export function ResultsInfo() {
+interface ResultsInfoProps {
+	onClearSearch?: () => void;
+}
+
+export function ResultsInfo({ onClearSearch }: ResultsInfoProps) {
 	const router = useRouter();
 	const params = useSearchParams();
 	const category = params.get('category') || 'all';
@@ -15,6 +19,11 @@ export function ResultsInfo() {
 		searchParams.delete('q');
 		searchParams.set('page', '1');
 		router.push(`/books?${searchParams.toString()}`);
+
+		// Call callback to clear search input
+		if (onClearSearch) {
+			onClearSearch();
+		}
 	};
 
 	// get book category detail by id

@@ -42,11 +42,11 @@ export function BookCard({ book }: BookCardProps) {
 						</span>
 					</div>
 					<div className="flex items-center gap-2">
-						{book.mainCategory && (
+						{/* {book.mainCategory && (
 							<Badge variant="outline" className="text-xs">
 								{book.mainCategory.name}
 							</Badge>
-						)}
+						)} */}
 						<Badge
 							variant={book.book_type === 'physical' ? 'default' : 'secondary'}
 							className="text-xs"

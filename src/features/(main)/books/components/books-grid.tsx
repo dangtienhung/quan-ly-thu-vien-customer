@@ -7,28 +7,28 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from '@/components/ui/pagination';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useBooks } from '@/hooks';
+import { useQueryParams } from '@/hooks/useQueryParams';
 import { BookOpen } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { BookCard } from './book-card';
 
 export function BooksGrid() {
 	const router = useRouter();
-	const params = useSearchParams();
-	const category = params.get('category') || 'all';
-	const page = parseInt(params.get('page') || '1');
-	const limit = parseInt(params.get('limit') || '12');
+	const params = useQueryParams();
+	const page = params.page ? parseInt(params.page) : 1;
 
-	const {
-		data: booksResponse,
-		isLoading,
-		isError,
-	} = useBooks({
-		page,
-		limit,
-		category_id: category === 'all' ? undefined : category,
-	});
+	const queryBooks = {
+		page: params.page ? parseInt(params.page) : 1,
+		limit: params.limit ? parseInt(params.limit) : 12,
+		main_category_id: params.category === 'all' ? undefined : params.category,
+		type:
+			params.type === 'all' ? undefined : (params.type as 'physical' | 'ebook'),
+		q: params.q,
+	};
+
+	const { data: booksResponse, isLoading, isError } = useBooks(queryBooks);
 
 	const books = booksResponse?.data || [];
 	const pagination = booksResponse?.pagination;
