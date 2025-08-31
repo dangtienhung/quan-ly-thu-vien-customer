@@ -1,12 +1,6 @@
+import { User } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-interface User {
-	id: string;
-	username: string;
-	email: string;
-	role: 'admin' | 'reader';
-}
 
 interface AuthState {
 	token: string | null;

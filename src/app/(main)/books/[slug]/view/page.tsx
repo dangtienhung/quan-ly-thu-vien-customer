@@ -1,11 +1,12 @@
 'use client';
 
-import { useAuth } from '@/contexts/AuthContext';
 import { useBookBySlug, useEBooksByBook, useFileUrl } from '@/hooks';
 import { BookOpen, FileText } from 'lucide-react';
+import { use, useEffect, useState } from 'react';
+
+import { useAuthStore } from '@/stores/auth-store';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { use, useEffect, useState } from 'react';
 
 const FlipbookViewer = dynamic(
 	() => import('@/components/flipbook-viewer/flipbook-viewer'),
@@ -27,7 +28,7 @@ interface BookReadingPageProps {
 
 const BookReadingPage: React.FC<BookReadingPageProps> = ({ params }) => {
 	const { slug } = use(params);
-	const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+	const { isAuthenticated } = useAuthStore();
 
 	// Fetch book data using React Query
 	const {
@@ -46,16 +47,19 @@ const BookReadingPage: React.FC<BookReadingPageProps> = ({ params }) => {
 	const { getFileUrl } = useFileUrl();
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedEBook, setSelectedEBook] = useState<any>(null);
+	console.log('🚀 ~ BookReadingPage ~ selectedEBook:', selectedEBook);
 
 	// Extract ebooks from the response
 	const ebooks = ebooksData?.data || [];
+	console.log('🚀 ~ BookReadingPage ~ ebooks:', ebooks);
 
 	useEffect(() => {
-		// Only check authentication, don't redirect automatically
-		if (!authLoading) {
+		if (ebooksLoading) {
+			setIsLoading(true);
+		} else {
 			setIsLoading(false);
 		}
-	}, [authLoading]);
+	}, [ebooksLoading]);
 
 	useEffect(() => {
 		// Set the first ebook as selected when ebooks are loaded
@@ -64,7 +68,7 @@ const BookReadingPage: React.FC<BookReadingPageProps> = ({ params }) => {
 		}
 	}, [ebooks, selectedEBook]);
 
-	if (authLoading || isLoading) {
+	if (isLoading) {
 		return (
 			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
 				<div className="text-center">

@@ -1,4 +1,3 @@
-import instance from '@/configs/instances';
 import type {
 	ApproveBorrowRecordDto,
 	BorrowRecordWithDetails,
@@ -12,6 +11,8 @@ import type {
 	SearchBorrowRecordsParams,
 	UpdateBorrowRecordDto,
 } from '@/types/borrow-records';
+
+import instance from '@/configs/instances';
 
 // API functions
 export const borrowRecordsApi = {
@@ -61,9 +62,9 @@ export const borrowRecordsApi = {
 		if (params.page) queryParams.append('page', params.page.toString());
 		if (params.limit) queryParams.append('limit', params.limit.toString());
 
-		const response = await instance.get(
-			`/borrow-records/status/${status}?${queryParams.toString()}`
-		);
+		const response = await instance.get(`/borrow-records/status/${status}`, {
+			params,
+		});
 		return response.data;
 	},
 

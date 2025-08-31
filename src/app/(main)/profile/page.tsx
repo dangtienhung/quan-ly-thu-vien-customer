@@ -16,11 +16,11 @@ import {
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
 import { useBorrowRecordsByReader } from '@/hooks/borrow-records';
 import { useReaderByUserId } from '@/hooks/readers';
+import { useAuthStore } from '@/stores/auth-store';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface ReadingHistory {
@@ -48,8 +48,7 @@ interface FavoriteBook {
 }
 
 const ProfilePage = () => {
-	const { user, logout } = useAuth();
-	const { isAuthenticated } = useAuth();
+	const { user, logout, isAuthenticated } = useAuthStore();
 	const router = useRouter();
 	const [activeTab, setActiveTab] = useState<
 		'profile' | 'history' | 'favorites' | 'borrowings'

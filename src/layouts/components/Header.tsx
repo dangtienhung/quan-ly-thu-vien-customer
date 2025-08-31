@@ -1,18 +1,19 @@
 'use client';
 
 import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
 import NotificationDropdown from '@/components/ui/notification-dropdown';
 import { useNotifications } from '@/hooks';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuthStore } from '@/stores/auth-store';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 const Header: React.FC = () => {
-	const { user, isAuthenticated, logout } = useAuth();
+	const { user, isAuthenticated, logout } = useAuthStore();
 	const router = useRouter();
+	const pathname = usePathname();
 
 	const {
 		notifications,
@@ -96,17 +97,45 @@ const Header: React.FC = () => {
 				</Link>
 
 				<nav className="hidden sm:flex space-x-6 text-base font-semibold">
-					<Link className="text-[#00B14F] " href="/">
+					<Link
+						className={`transition-colors ${
+							pathname === '/'
+								? 'text-[#00B14F]'
+								: 'text-gray-700 hover:text-[#00B14F]'
+						}`}
+						href="/"
+					>
 						Trang chủ
 					</Link>
-					<Link className="" href="#">
+					<Link
+						className={`transition-colors ${
+							pathname.startsWith('/books')
+								? 'text-[#00B14F]'
+								: 'text-gray-700 hover:text-[#00B14F]'
+						}`}
+						href="/books"
+					>
 						Tài liệu
 					</Link>
 
-					<Link className="" href="#">
+					<Link
+						className={`transition-colors ${
+							pathname === '/news'
+								? 'text-[#00B14F]'
+								: 'text-gray-700 hover:text-[#00B14F]'
+						}`}
+						href="/news"
+					>
 						Tin tức
 					</Link>
-					<Link className="" href="#">
+					<Link
+						className={`transition-colors ${
+							pathname === '/about'
+								? 'text-[#00B14F]'
+								: 'text-gray-700 hover:text-[#00B14F]'
+						}`}
+						href="/about"
+					>
 						Giới thiệu
 					</Link>
 				</nav>
@@ -120,18 +149,11 @@ const Header: React.FC = () => {
 					</button>
 
 					{isAuthenticated && readerId && (
-						<>
-							{notificationsError && (
-								<div className="text-xs text-red-500 mr-2">
-									{notificationsError}
-								</div>
-							)}
-							<NotificationDropdown
-								notifications={notifications}
-								onMarkAsRead={markAsRead}
-								onMarkAllAsRead={markAllAsRead}
-							/>
-						</>
+						<NotificationDropdown
+							notifications={notifications}
+							onMarkAsRead={markAsRead}
+							onMarkAllAsRead={markAllAsRead}
+						/>
 					)}
 
 					{isAuthenticated ? (

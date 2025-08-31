@@ -6,10 +6,10 @@ import {
 import { useEffect, useState } from 'react';
 
 import { readersApi } from '@/apis/readers';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/auth-store';
 
 export const useNotifications = (filters?: NotificationFilters) => {
-	const { user } = useAuth();
+	const { user } = useAuthStore();
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [readerId, setReaderId] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);

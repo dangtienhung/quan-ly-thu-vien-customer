@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { borrowRecordsApi } from '@/apis/borrow-records';
 import { physicalCopiesApi } from '@/apis/physical-copies';
 import { RegisterLibraryCardDialog } from '@/components/register-library-card-dialog';
+import { useBorrowRecordsByStatus } from '@/hooks';
 import { useBookBySlug } from '@/hooks/books';
 import { useAvailablePhysicalCopiesByBook } from '@/hooks/physical-copies';
 import { useReaderByUserId } from '@/hooks/readers';
@@ -43,6 +44,13 @@ const PhysicalBookRegistrationPage = () => {
 	const { data: availableCopies } = useAvailablePhysicalCopiesByBook(
 		book?.id || ''
 	);
+
+	// Fetch borrow records for current reader
+	const { data: borrowRecords } = useBorrowRecordsByStatus('borrowed', {
+		page: 1,
+		limit: 2,
+	});
+	const borrowRecordsData = borrowRecords?.data;
 
 	// Create reservation mutation
 	const createReservation = useCreateReservation();
@@ -158,6 +166,12 @@ const PhysicalBookRegistrationPage = () => {
 			const reservationDate = new Date();
 			const expiryDate = new Date();
 			expiryDate.setDate(expiryDate.getDate() + 1); // 2 days from now
+
+			// Check if the reader has already borrowed 2 books
+			if (borrowRecordsData && borrowRecordsData.length >= 2) {
+				toast.error('Bạn đã mượn tối đa 2 sách');
+				return;
+			}
 
 			await createReservation.mutateAsync(
 				{

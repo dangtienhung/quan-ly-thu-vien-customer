@@ -113,8 +113,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 						</span>
 					</div>
 					<p className="text-sm text-gray-500 mt-1">
-						Thời gian mượn tối đa:{' '}
-						{currentReader.readerType?.borrowDurationDays || 14} ngày
+						Thời gian mượn:{' '}
+						<span className="font-medium text-blue-600">
+							{currentReader.readerType?.borrowDurationDays || 14} ngày
+						</span>{' '}
+						(từ {new Date(borrowDate).toLocaleDateString('vi-VN')} đến{' '}
+						{new Date(dueDate).toLocaleDateString('vi-VN')})
 					</p>
 				</div>
 
@@ -124,10 +128,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 						Thông tin đặt trước:
 					</h4>
 					<ul className="text-sm text-blue-700 space-y-1">
-						<li>• Đặt trước có hiệu lực trong 7 ngày</li>
-						<li>• Khi có sách sẵn, thư viện sẽ liên hệ bạn</li>
-						<li>• Bạn có thể hủy đặt trước bất cứ lúc nào</li>
-						<li>• Đặt trước sẽ tự động hết hạn sau 7 ngày</li>
+						<li>
+							• Đặt trước có hiệu lực trong{' '}
+							{currentReader.readerType?.borrowDurationDays || 14} ngày kể từ
+							ngày đặt
+						</li>
+						<li>
+							• Khi có sách sẵn, thư viện sẽ thông báo qua email hoặc điện thoại
+						</li>
+						<li>• Bạn có thể hủy đặt trước bất cứ lúc nào trong tài khoản</li>
+						<li>
+							• Đặt trước sẽ tự động hết hạn sau{' '}
+							{currentReader.readerType?.borrowDurationDays || 14} ngày nếu
+							không có sách
+						</li>
+						{/* <li>
+							• Sau khi nhận thông báo, bạn có 3 ngày để đến thư viện mượn sách
+						</li> */}
 					</ul>
 				</div>
 
