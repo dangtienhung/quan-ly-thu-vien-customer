@@ -3,14 +3,14 @@
 import { Eye, EyeOff } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useLogin } from '@/hooks/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
+import { Input } from '@/components/ui/input';
+import { useForm } from 'react-hook-form';
+import { useLogin } from '@/hooks/auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 // Form validation schema - giống với LoginDialog
 const loginSchema = z.object({
@@ -94,11 +94,11 @@ export default function LoginPage() {
 								htmlFor="username"
 								className="block text-sm font-medium text-gray-700 mb-2"
 							>
-								Mã người dùng
+								Tài khoản đăng nhập
 							</label>
 							<Input
 								id="username"
-								placeholder="Mã người dùng"
+								placeholder="Tài khoản đăng nhập"
 								className="h-12 rounded !h-12"
 								{...form.register('username')}
 							/>
