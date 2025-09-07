@@ -1,14 +1,14 @@
 'use client';
 
 import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
-import NotificationDropdown from '@/components/ui/notification-dropdown';
-import { useNotifications } from '@/hooks';
-import { useAuthStore } from '@/stores/auth-store';
 import Image from 'next/image';
 import Link from 'next/link';
+import NotificationDropdown from '@/components/ui/notification-dropdown';
+import { useAuthStore } from '@/stores/auth-store';
+import { useNotifications } from '@/hooks';
 
 const Header: React.FC = () => {
 	const { user, isAuthenticated, logout } = useAuthStore();
@@ -86,7 +86,7 @@ const Header: React.FC = () => {
 							alt="Logo trường THPT Hoài Đức A"
 							className="w-8 h-8 object-contain"
 							height={32}
-							src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/537695210_1304240211495265_2418224581590370134_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=s2YVIhCZtSEQ7kNvwF2V05z&_nc_oc=AdmTeXWyuOiTxuQTzxwXlQcU-M6sIcHWgkbvWEmUgit6uGB4sNQZXZaFfVPMOOZdW04&_nc_zt=23&_nc_ht=scontent.fhan14-2.fna&_nc_gid=o8UOvFxQybsrwwYbR7UjjA&oh=00_AfVLGvH1B12OlfzIL21mqS4sbh6CIUYlFZY00E5Mrt5Cjw&oe=68AF11CD"
+							src="/logo.jpg"
 							width={32}
 							priority
 						/>

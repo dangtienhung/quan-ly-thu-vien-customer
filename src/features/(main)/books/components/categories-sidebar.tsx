@@ -1,16 +1,29 @@
 'use client';
 
+import {
+	BookOpen,
+	ChevronDown,
+	ChevronRight,
+	Filter,
+	PanelLeftClose,
+	PanelLeftOpen,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Filter } from 'lucide-react';
 
-import { useAllBookCategories } from '@/hooks/book-categories';
-import { useQueryParams } from '@/hooks/useQueryParams';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useHierarchicalCategories } from '@/hooks/useHierarchicalCategories';
+import { useQueryParams } from '@/hooks/useQueryParams';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export function CategoriesSidebar() {
 	const router = useRouter();
 	const params = useQueryParams();
+	const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+		new Set()
+	);
+	const [isCollapsed, setIsCollapsed] = useState(false);
 
 	const category = params.category || 'all';
 
@@ -23,7 +36,11 @@ export function CategoriesSidebar() {
 		q: params.q,
 	};
 
-	const { bookCategories, isLoading, isError } = useAllBookCategories();
+	const {
+		data: hierarchicalData,
+		isLoading,
+		isError,
+	} = useHierarchicalCategories();
 
 	const handleCategoryChange = (categoryId: string) => {
 		const params = new URLSearchParams();
@@ -44,85 +61,157 @@ export function CategoriesSidebar() {
 		router.push(`/books?${params.toString()}`);
 	};
 
-	return (
-		<div className="w-64 flex-shrink-0">
-			<Card className="shadow-none !p-0 border-none rounded-none">
-				<CardHeader className="!px-0 !pt-0">
-					<CardTitle className="flex items-center gap-2">
-						<Filter className="h-5 w-5" />
-						Danh mục
-					</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-2 !p-0">
-					{/* "Tất cả sách" option */}
+	const toggleCategory = (categoryId: string) => {
+		setExpandedCategories((prev) => {
+			const newSet = new Set(prev);
+			if (newSet.has(categoryId)) {
+				newSet.delete(categoryId);
+			} else {
+				newSet.add(categoryId);
+			}
+			return newSet;
+		});
+	};
+
+	const toggleSidebar = () => {
+		setIsCollapsed(!isCollapsed);
+	};
+
+	const renderCategory = (categoryItem: any, level: number = 0) => {
+		const isExpanded = expandedCategories.has(categoryItem.id);
+		const hasChildren =
+			categoryItem.children && categoryItem.children.length > 0;
+
+		return (
+			<div key={categoryItem.id} className="space-y-1">
+				<div className="flex items-center">
+					{hasChildren && (
+						<button
+							onClick={() => toggleCategory(categoryItem.id)}
+							className="p-1 hover:bg-gray-100 rounded mr-1"
+						>
+							{isExpanded ? (
+								<ChevronDown className="h-3 w-3" />
+							) : (
+								<ChevronRight className="h-3 w-3" />
+							)}
+						</button>
+					)}
+					{!hasChildren && <div className="w-5" />}
+
 					<button
-						onClick={() => handleCategoryChange('all')}
+						onClick={() => handleCategoryChange(categoryItem.id)}
 						className={cn(
-							'w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors',
-							category === 'all'
+							'flex-1 flex items-center gap-2 p-2 rounded-lg text-left transition-colors',
+							category === categoryItem.id
 								? 'bg-blue-50 text-blue-700 border border-blue-200'
-								: 'hover:bg-gray-50'
+								: 'hover:bg-gray-50',
+							level > 0 && 'ml-4'
 						)}
 					>
-						<div className="flex items-center gap-3">
-							<BookOpen className="h-4 w-4" />
-							<span className="font-medium">Tất cả sách</span>
-						</div>
-						{/* <Badge variant="secondary" className="text-xs">
+						<BookOpen className="h-4 w-4" />
+						<span className="font-medium text-sm">{categoryItem.name}</span>
+					</button>
+				</div>
+
+				{hasChildren && isExpanded && (
+					<div className="ml-2 space-y-1">
+						{categoryItem.children.map((child: any) =>
+							renderCategory(child, level + 1)
+						)}
+					</div>
+				)}
+			</div>
+		);
+	};
+
+	return (
+		<div
+			className={cn(
+				'flex-shrink-0 transition-all duration-300 ease-in-out',
+				isCollapsed ? 'w-12' : 'w-64'
+			)}
+		>
+			<Card className="shadow-none !p-0 border-none rounded-none h-fit">
+				<CardHeader className="!px-0 !pt-0">
+					<div className="flex items-center justify-between">
+						{!isCollapsed && (
+							<CardTitle className="flex items-center gap-2">
+								<Filter className="h-5 w-5" />
+								Danh mục
+							</CardTitle>
+						)}
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={toggleSidebar}
+							className="h-8 w-8 p-0 hover:bg-gray-100"
+							title={isCollapsed ? 'Mở rộng danh mục' : 'Thu gọn danh mục'}
+						>
+							{isCollapsed ? (
+								<PanelLeftOpen className="h-4 w-4" />
+							) : (
+								<PanelLeftClose className="h-4 w-4" />
+							)}
+						</Button>
+					</div>
+				</CardHeader>
+				{!isCollapsed && (
+					<CardContent className="space-y-2 !p-0">
+						{/* "Tất cả sách" option */}
+						<button
+							onClick={() => handleCategoryChange('all')}
+							className={cn(
+								'w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors',
+								category === 'all'
+									? 'bg-blue-50 text-blue-700 border border-blue-200'
+									: 'hover:bg-gray-50'
+							)}
+						>
+							<div className="flex items-center gap-3">
+								<BookOpen className="h-4 w-4" />
+								<span className="font-medium">Tất cả sách</span>
+							</div>
+							{/* <Badge variant="secondary" className="text-xs">
 							{bookCategories?.length || 0}
 						</Badge> */}
-					</button>
+						</button>
 
-					{/* Loading state */}
-					{isLoading && (
-						<div className="space-y-2">
-							{Array.from({ length: 5 }).map((_, index) => (
-								<div
-									key={index}
-									className="flex items-center justify-between p-3"
-								>
-									<div className="flex items-center gap-3">
-										<div className="h-4 w-4 bg-gray-200 rounded animate-pulse" />
-										<div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
+						{/* Loading state */}
+						{isLoading && (
+							<div className="space-y-2">
+								{Array.from({ length: 5 }).map((_, index) => (
+									<div
+										key={index}
+										className="flex items-center justify-between p-3"
+									>
+										<div className="flex items-center gap-3">
+											<div className="h-4 w-4 bg-gray-200 rounded animate-pulse" />
+											<div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
+										</div>
+										<div className="h-5 w-8 bg-gray-200 rounded animate-pulse" />
 									</div>
-									<div className="h-5 w-8 bg-gray-200 rounded animate-pulse" />
-								</div>
-							))}
-						</div>
-					)}
+								))}
+							</div>
+						)}
 
-					{/* Error state */}
-					{isError && (
-						<div className="text-center py-4 text-red-500 text-sm">
-							Không thể tải danh mục sách
-						</div>
-					)}
+						{/* Error state */}
+						{isError && (
+							<div className="text-center py-4 text-red-500 text-sm">
+								Không thể tải danh mục sách
+							</div>
+						)}
 
-					{/* Categories from API */}
-					{!isLoading &&
-						!isError &&
-						bookCategories &&
-						bookCategories.map((categoryItem) => (
-							<button
-								key={categoryItem.id}
-								onClick={() => handleCategoryChange(categoryItem.id)}
-								className={cn(
-									'w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors',
-									category === categoryItem.id
-										? 'bg-blue-50 text-blue-700 border border-blue-200'
-										: 'hover:bg-gray-50'
-								)}
-							>
-								<div className="flex items-center gap-3">
-									<BookOpen className="h-4 w-4" />
-									<span className="font-medium">{categoryItem.name}</span>
-								</div>
-								{/* <Badge variant="secondary" className="text-xs">
-									{categoryItem.children?.length || 0}
-								</Badge> */}
-							</button>
-						))}
-				</CardContent>
+						{/* Hierarchical Categories */}
+						{!isLoading &&
+							!isError &&
+							hierarchicalData &&
+							hierarchicalData.data &&
+							hierarchicalData.data.map((categoryItem: any) =>
+								renderCategory(categoryItem)
+							)}
+					</CardContent>
+				)}
 			</Card>
 		</div>
 	);

@@ -1,11 +1,6 @@
 'use client';
 
-import {
-	BannerSection,
-	BookSection,
-	CategoriesSection,
-	HeroSection,
-} from '@/features/home/components';
+import { BookSection, HeroSection } from '@/features/home/components';
 import { useBooksByType, useLatestBooks } from '@/hooks/books';
 
 import RootLayoutShell from '@/layouts/root-layout';
@@ -48,14 +43,16 @@ const HomePage = () => {
 		<RootLayoutShell>
 			<div>
 				<HeroSection />
-				<CategoriesSection />
-				<BookSection
-					title="Sách mới thêm"
-					books={transformBookData(latestBooks)}
-					isLoading={isLoadingLatest}
-					href="/books"
-				/>
-				<BannerSection />
+				{/* <CategoriesSection /> */}
+				<div className="mt-10">
+					<BookSection
+						title="Sách mới thêm"
+						books={transformBookData(latestBooks)}
+						isLoading={isLoadingLatest}
+						href="/books"
+					/>
+				</div>
+				{/* <BannerSection /> */}
 				<BookSection
 					title="Sách giấy"
 					books={transformBookData(physicalBooks?.data)}

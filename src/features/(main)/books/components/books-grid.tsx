@@ -8,13 +8,17 @@ import {
 	PaginationPrevious,
 } from '@/components/ui/pagination';
 
+import { BookCard } from './book-card';
+import { BookOpen } from 'lucide-react';
 import { useBooks } from '@/hooks';
 import { useQueryParams } from '@/hooks/useQueryParams';
-import { BookOpen } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { BookCard } from './book-card';
 
-export function BooksGrid() {
+interface BooksGridProps {
+	bookType?: 'physical' | 'ebook';
+}
+
+export function BooksGrid({ bookType }: BooksGridProps) {
 	const router = useRouter();
 	const params = useQueryParams();
 	const page = params.page ? parseInt(params.page) : 1;
@@ -24,7 +28,10 @@ export function BooksGrid() {
 		limit: params.limit ? parseInt(params.limit) : 12,
 		main_category_id: params.category === 'all' ? undefined : params.category,
 		type:
-			params.type === 'all' ? undefined : (params.type as 'physical' | 'ebook'),
+			bookType ||
+			(params.type === 'all'
+				? undefined
+				: (params.type as 'physical' | 'ebook')),
 		q: params.q,
 	};
 
@@ -72,15 +79,34 @@ export function BooksGrid() {
 	}
 
 	if (books.length === 0) {
+		const getEmptyMessage = () => {
+			if (bookType === 'physical') {
+				return {
+					title: 'Chưa có sách vật lý',
+					description: 'Hiện tại chưa có sách in nào trong danh mục này',
+				};
+			} else if (bookType === 'ebook') {
+				return {
+					title: 'Chưa có sách điện tử',
+					description: 'Hiện tại chưa có e-book nào trong danh mục này',
+				};
+			} else {
+				return {
+					title: 'Không tìm thấy sách',
+					description: 'Thử thay đổi từ khóa tìm kiếm hoặc chọn danh mục khác',
+				};
+			}
+		};
+
+		const emptyMessage = getEmptyMessage();
+
 		return (
 			<div className="text-center py-12">
 				<BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
 				<h3 className="text-lg font-medium text-gray-900 mb-2">
-					Không tìm thấy sách
+					{emptyMessage.title}
 				</h3>
-				<p className="text-gray-600">
-					Thử thay đổi từ khóa tìm kiếm hoặc chọn danh mục khác
-				</p>
+				<p className="text-gray-600">{emptyMessage.description}</p>
 			</div>
 		);
 	}
@@ -94,8 +120,8 @@ export function BooksGrid() {
 				))}
 			</div>
 
-			{/* Pagination */}
-			{pagination && pagination.totalPages > 1 && (
+			{/* Pagination - Only show when not in collapse mode */}
+			{!bookType && pagination && pagination.totalPages > 1 && (
 				<Pagination>
 					<PaginationContent>
 						{/* Previous Button */}

@@ -53,14 +53,14 @@ const BookIntroduction: React.FC<BookIntroductionProps> = ({ book }) => {
 						</div>
 					)}
 
-					{book.isbn && (
+					{/* {book.isbn && (
 						<div className="flex items-center space-x-2">
 							<span className="font-semibold text-sm text-gray-700 min-w-[80px]">
 								ISBN:
 							</span>
 							<span className="text-sm text-gray-900">{book.isbn}</span>
 						</div>
-					)}
+					)} */}
 
 					{book.publish_year && (
 						<div className="flex items-center space-x-2">
