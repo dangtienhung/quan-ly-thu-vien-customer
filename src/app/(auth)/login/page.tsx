@@ -5,6 +5,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { useLogin } from '@/hooks/auth';
 import { useRouter } from 'next/navigation';
@@ -99,7 +100,7 @@ export default function LoginPage() {
 							<Input
 								id="username"
 								placeholder="Tài khoản đăng nhập"
-								className="h-12 rounded !h-12"
+								className="h-12 rounded"
 								{...form.register('username')}
 							/>
 							{form.formState.errors.username && (
@@ -121,7 +122,7 @@ export default function LoginPage() {
 									id="password"
 									type={showPassword ? 'text' : 'password'}
 									placeholder="Mật khẩu"
-									className="h-12 rounded !h-12 pr-10"
+									className="h-12 rounded pr-10"
 									{...form.register('password')}
 								/>
 								<Button
@@ -155,7 +156,7 @@ export default function LoginPage() {
 						<Button
 							type="submit"
 							disabled={isLoading}
-							className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 rounded !h-12"
+							className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 rounded h-12"
 						>
 							{isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
 						</Button>
@@ -163,17 +164,12 @@ export default function LoginPage() {
 
 					{/* Additional links - giống với LoginDialog */}
 					<div className="text-center mt-4">
-						<Button
-							type="button"
-							variant="link"
-							className="text-sm text-blue-600 hover:text-blue-800 p-0 h-auto"
-							onClick={() => {
-								// TODO: Implement forgot password
-								console.log('Forgot password clicked');
-							}}
+						<Link
+							href="/forgot-password"
+							className="text-sm text-blue-600 hover:text-blue-800 underline"
 						>
 							Quên mật khẩu?
-						</Button>
+						</Link>
 					</div>
 				</div>
 			</div>

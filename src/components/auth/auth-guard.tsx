@@ -17,7 +17,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
 	useEffect(() => {
 		// Danh sách các route không cần authentication
-		const publicRoutes = ['/login', '/register', '/forgot-password'];
+		const publicRoutes = [
+			'/login',
+			'/register',
+			'/forgot-password',
+			'/reset-password',
+		];
 		const isPublicRoute = publicRoutes.includes(pathname);
 
 		// Nếu không có token và không phải public route
@@ -36,7 +41,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
 	// Hiển thị loading hoặc children tùy thuộc vào trạng thái
 	if (
 		!isAuthenticated &&
-		!['/login', '/register', '/forgot-password'].includes(pathname)
+		!['/login', '/register', '/forgot-password', '/reset-password'].includes(
+			pathname
+		)
 	) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">

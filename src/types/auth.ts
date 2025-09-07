@@ -42,9 +42,8 @@ export interface ForgotPasswordRequest {
 }
 
 export interface ResetPasswordRequest {
-	token: string;
+	resetToken: string;
 	newPassword: string;
-	confirmNewPassword: string;
 }
 
 export interface FilterUsersRequest {
