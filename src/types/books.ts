@@ -30,6 +30,11 @@ export interface BookWithAuthors extends Book {
 		name: string;
 		slug: string;
 	};
+	category?: {
+		id: string;
+		category_name: string;
+		slug: string;
+	};
 }
 
 export interface CreateBookDto {
@@ -70,9 +75,11 @@ export interface BooksResponse {
 export interface BooksQueryParams {
 	page?: number;
 	limit?: number;
+	q?: string;
 	type?: 'physical' | 'ebook';
 	main_category_id?: string;
 	category_id?: string;
+	view?: 'asc' | 'desc';
 }
 
 export interface SearchBooksParams {

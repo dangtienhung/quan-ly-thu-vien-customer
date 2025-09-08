@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '@/stores/auth-store';
 
 const instance = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8002/api',
@@ -12,10 +13,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
 	(config) => {
 		// Thêm token vào header nếu cần
-		const accessToken = JSON.parse(
-			localStorage.getItem('auth-storage') || '{}'
-		);
-		const token = accessToken.state.token;
+		const token = useAuthStore.getState().token;
 
 		if (token) {
 			config.headers['Authorization'] = `Bearer ${token}`;
@@ -32,10 +30,10 @@ instance.interceptors.response.use(
 		// Xử lý lỗi toàn cục (ví dụ: thông báo, redirect, ...)
 		console.log('🚀 ~ error.response:', error.response);
 		if (error.response && error.response.status === 401) {
-			// Xóa accessToken khỏi localStorage
-			// localStorage.removeItem('accessToken');
+			// Xóa token khỏi Zustand store
+			useAuthStore.getState().logout();
 			// Chuyển hướng về trang login
-			// window.location.href = '/login';
+			window.location.href = '/login';
 		}
 		return Promise.reject(error);
 	}
