@@ -48,6 +48,9 @@ export default function LoginPage() {
 				} else {
 					// Nếu không có URL redirect, về trang chủ
 					router.push('/');
+					setTimeout(() => {
+						window.location.href = '/';
+					}, 1000);
 				}
 				// Reset form
 				form.reset();

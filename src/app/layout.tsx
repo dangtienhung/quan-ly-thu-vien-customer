@@ -1,10 +1,11 @@
 import './globals.css';
 
 import { AuthGuard } from '@/components/auth/auth-guard';
-import QueryClientProviders from '@/components/providers/query-client-provider';
-import { Toaster } from '@/components/ui/sonner';
+import { AuthSync } from '@/components/auth/auth-sync';
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
+import QueryClientProviders from '@/components/providers/query-client-provider';
+import { Toaster } from '@/components/ui/sonner';
 
 const poppins = Poppins({
 	weight: ['300', '400', '500', '600', '700'],
@@ -30,6 +31,7 @@ export default function RootLayout({
 				suppressHydrationWarning
 			>
 				<QueryClientProviders>
+					<AuthSync />
 					<AuthGuard>{children}</AuthGuard>
 					<Toaster />
 				</QueryClientProviders>

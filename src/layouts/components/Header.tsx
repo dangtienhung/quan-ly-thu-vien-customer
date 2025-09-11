@@ -55,6 +55,7 @@ const Header: React.FC = () => {
 	const handleLogout = () => {
 		logout();
 		setIsDropdownOpen(false);
+		window.location.href = '/login';
 	};
 
 	// Don't render until mounted to prevent hydration mismatch
