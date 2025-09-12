@@ -1,14 +1,14 @@
 'use client';
 
 import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
 
+import NotificationDropdown from '@/components/ui/notification-dropdown';
+import { useNotifications } from '@/hooks';
+import { useAuthStore } from '@/stores/auth-store';
 import Image from 'next/image';
 import Link from 'next/link';
-import NotificationDropdown from '@/components/ui/notification-dropdown';
-import { useAuthStore } from '@/stores/auth-store';
-import { useNotifications } from '@/hooks';
 
 const Header: React.FC = () => {
 	const { user, isAuthenticated, logout } = useAuthStore();
@@ -85,14 +85,14 @@ const Header: React.FC = () => {
 					<div className="flex items-center space-x-2">
 						<Image
 							alt="Logo trường THPT Hoài Đức A"
-							className="w-8 h-8 object-contain"
-							height={32}
+							className="w-14 h-14 object-contain"
+							height={64}
 							src="/logo.jpg"
-							width={32}
+							width={64}
 							priority
 						/>
-						<div className="font-semibold text-base leading-none">
-							THPT HOÀI ĐỨC A
+						<div className="font-semibold text-[18px] leading-none">
+							TRƯỜNG THPT HOÀI ĐỨC A
 						</div>
 					</div>
 				</Link>
@@ -119,7 +119,7 @@ const Header: React.FC = () => {
 						Tài liệu
 					</Link>
 
-					<Link
+					{/* <Link
 						className={`transition-colors ${
 							pathname === '/news'
 								? 'text-[#00B14F]'
@@ -138,7 +138,7 @@ const Header: React.FC = () => {
 						href="/about"
 					>
 						Giới thiệu
-					</Link>
+					</Link> */}
 				</nav>
 
 				<div className="flex items-center space-x-3">

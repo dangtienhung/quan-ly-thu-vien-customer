@@ -9,7 +9,6 @@ import {
 	Clock,
 	Heart,
 	LogOut,
-	Settings,
 	User,
 	XCircle,
 } from 'lucide-react';
@@ -273,7 +272,7 @@ const ProfilePage = () => {
 											</p>
 										</div>
 									</div>
-									<div className="pt-4 border-t border-gray-200">
+									{/* <div className="pt-4 border-t border-gray-200">
 										<Button
 											variant="outline"
 											className="flex items-center space-x-2"
@@ -281,7 +280,7 @@ const ProfilePage = () => {
 											<Settings className="w-4 h-4" />
 											<span>Cập nhật thông tin</span>
 										</Button>
-									</div>
+									</div> */}
 								</div>
 							</div>
 						)}
@@ -515,7 +514,7 @@ const ProfilePage = () => {
 																</div>
 															</div>
 
-															{record.borrow_notes && (
+															{/* {record.borrow_notes && (
 																<div className="mt-2">
 																	<p className="text-sm text-gray-500">
 																		<span className="font-medium">
@@ -524,9 +523,9 @@ const ProfilePage = () => {
 																		{record.borrow_notes}
 																	</p>
 																</div>
-															)}
+															)} */}
 
-															{record.return_notes && (
+															{/* {record.return_notes && (
 																<div className="mt-1">
 																	<p className="text-sm text-gray-500">
 																		<span className="font-medium">
@@ -535,7 +534,7 @@ const ProfilePage = () => {
 																		{record.return_notes}
 																	</p>
 																</div>
-															)}
+															)} */}
 														</div>
 													</div>
 												</div>

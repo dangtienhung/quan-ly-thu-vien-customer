@@ -1,6 +1,5 @@
 'use client';
 
-import { AlertCircle, CreditCard } from 'lucide-react';
 import {
 	Dialog,
 	DialogContent,
@@ -8,15 +7,16 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
+import { AlertCircle, CreditCard } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCreateReader } from '@/hooks/readers';
 import { useReaderTypes } from '@/hooks/reader-types';
+import { useCreateReader } from '@/hooks/readers';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 interface RegisterLibraryCardDialogProps {
@@ -166,7 +166,7 @@ export const RegisterLibraryCardDialog = ({
 									<li>
 										• Loại độc giả mặc định: <strong>Student</strong>
 									</li>
-									<li>• Số thẻ sẽ là mã sinh viên của bạn</li>
+									<li>• Số thẻ sẽ là mã Học Sinh của bạn</li>
 									<li>• Cần liên hệ thư viện để kích hoạt thẻ</li>
 								</ul>
 							</div>
@@ -270,14 +270,14 @@ export const RegisterLibraryCardDialog = ({
 
 						{/* Card Number */}
 						<div className="space-y-2">
-							<Label htmlFor="cardNumber">Số thẻ thư viện (Mã sinh viên)</Label>
+							<Label htmlFor="cardNumber">Số thẻ thư viện (Mã Học Sinh)</Label>
 							<Input
 								id="cardNumber"
 								value={formData.cardNumber}
 								onChange={(e) =>
 									setFormData({ ...formData, cardNumber: e.target.value })
 								}
-								placeholder="Nhập mã sinh viên"
+								placeholder="Nhập mã Học Sinh"
 								className="w-full"
 								disabled
 							/>

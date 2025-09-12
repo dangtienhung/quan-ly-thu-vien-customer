@@ -82,7 +82,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 						htmlFor="borrowDate"
 						className="block text-sm font-medium text-gray-700 mb-2"
 					>
-						Ngày mượn dự kiến
+						Ngày đặt
 					</label>
 					<div className="flex items-center space-x-2">
 						<Calendar className="w-5 h-5 text-gray-400" />
@@ -97,14 +97,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 						/>
 					</div>
 					<p className="text-sm text-gray-500 mt-1">
-						Ngày bạn muốn mượn sách (tối thiểu từ hôm nay)
+						Ngày bạn muốn mượn sách (tối thiểu từ hôm nay đến ngày sau hôm đó)
 					</p>
 				</div>
 
 				{/* Expected Due Date (Read-only) */}
 				<div>
 					<label className="block text-sm font-medium text-gray-700 mb-2">
-						Ngày trả dự kiến
+						Hạn lấy sách
 					</label>
 					<div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
 						<Calendar className="w-5 h-5 text-gray-400" />

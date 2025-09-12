@@ -139,7 +139,7 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 							<div className="flex items-center space-x-2 text-sm">
 								<Book className="w-4 h-4" />
 								<span>
-									Kho sách: {book.mainCategory?.name || 'Sách giáo khoa'}
+									Thể loại: {book.mainCategory?.name || 'Sách giáo khoa'}
 								</span>
 							</div>
 						</div>
