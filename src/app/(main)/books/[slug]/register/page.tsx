@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 
 import { borrowRecordsApi } from '@/apis/borrow-records';
 import { physicalCopiesApi } from '@/apis/physical-copies';
+import { RouteDebug } from '@/components/debug/route-debug';
 import { RegisterLibraryCardDialog } from '@/components/register-library-card-dialog';
 import { useBorrowRecordsByStatus } from '@/hooks';
 import { useBookBySlug } from '@/hooks/books';
@@ -58,13 +59,19 @@ const PhysicalBookRegistrationPage = () => {
 	// Form state
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	// Check if user is authenticated
+	// Check if user is authenticated - với delay để tránh timing issue
 	useEffect(() => {
-		if (!isAuthenticated) {
-			toast.error('Bạn cần đăng nhập để mượn sách');
-			router.push('/login');
-		}
-	}, [isAuthenticated, router]);
+		// Chỉ redirect sau một delay nhỏ để đảm bảo auth state đã được restore
+		const timer = setTimeout(() => {
+			if (!isAuthenticated && user === null) {
+				console.log('🔒 No authentication detected, redirecting to login');
+				toast.error('Bạn cần đăng nhập để mượn sách');
+				router.push('/login');
+			}
+		}, 100); // 100ms delay
+
+		return () => clearTimeout(timer);
+	}, [isAuthenticated, user, router]);
 
 	// Check if book is physical
 	useEffect(() => {
@@ -243,6 +250,7 @@ const PhysicalBookRegistrationPage = () => {
 
 	return (
 		<div className="min-h-screen bg-gray-50">
+			<RouteDebug />
 			<div className="max-w-7xl mx-auto px-4 py-8">
 				<PageHeader bookSlug={slug} />
 
