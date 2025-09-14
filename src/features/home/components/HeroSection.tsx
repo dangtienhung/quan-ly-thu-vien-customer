@@ -1,9 +1,11 @@
+import { BookOpen, CheckCircle, Eye, FileText, Play } from 'lucide-react';
+
+import { useBooks } from '@/hooks/books';
+import { useAuthStore } from '@/stores/auth-store';
 import { BookWithAuthors } from '@/types/books';
 import Image from 'next/image';
-import React from 'react';
-import { useAuthStore } from '@/stores/auth-store';
-import { useBooks } from '@/hooks/books';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 
 const HeroSection: React.FC = () => {
 	const router = useRouter();
@@ -98,11 +100,11 @@ const HeroSection: React.FC = () => {
 					</h2>
 					<div className="flex items-center space-x-2 text-sm sm:text-base mb-2">
 						<div className="flex items-center space-x-1">
-							<i className="fas fa-eye"></i>
+							<Eye className="w-4 h-4" />
 							<span>{featuredBook?.view || 0} lượt xem</span>
 						</div>
 						<div className="flex items-center space-x-1">
-							<i className="fas fa-book"></i>
+							<BookOpen className="w-4 h-4" />
 							<span>{featuredBook?.page_count || 0} trang</span>
 						</div>
 					</div>
@@ -122,7 +124,7 @@ const HeroSection: React.FC = () => {
 						onClick={handleReadBook}
 						className="bg-[#00B14F] text-white text-xs sm:text-sm font-semibold rounded-full px-4 py-1 flex items-center space-x-2 hover:bg-[#009a43]"
 					>
-						<i className="fas fa-play"></i>
+						<Play className="w-4 h-4" />
 						<span>
 							{featuredBook?.book_type === 'ebook' ? 'ĐỌC NGAY' : 'MƯỢN NGAY'}
 						</span>
@@ -131,60 +133,58 @@ const HeroSection: React.FC = () => {
 
 				{/* Right: List of books */}
 				<div className="w-full max-w-sm mx-auto md:mx-0">
-					{/* Books list with glass effect */}
-					<div className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent pr-2">
+					{/* Books list with clean card design */}
+					<div
+						className="space-y-4 max-h-[600px] overflow-y-auto transparent-scrollbar"
+						style={{
+							scrollbarWidth: 'thin',
+							scrollbarColor: 'transparent transparent',
+						}}
+					>
 						{sidebarBooks.map((book: BookWithAuthors, index: number) => (
 							<div
 								key={book.id}
+								// className="group bg-white rounded-xl p-4 flex items-center space-x-4 cursor-pointer hover:shadow-lg transition-all duration-300 border border-gray-100"
 								className="group backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-4 flex items-center space-x-4 cursor-pointer hover:bg-white/20 hover:border-white/30 transition-all duration-300 shadow-lg hover:shadow-purple-500/10"
+								onClick={() => handleBookClick(book.slug)}
 							>
-								{/* Book cover with glass effect */}
-								<div className="relative flex-shrink-0">
-									<div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl blur group-hover:blur-md transition-all duration-300"></div>
+								{/* Book cover */}
+								<div className="flex-shrink-0">
 									<Image
 										alt={`Bìa sách ${book.title}`}
-										className="relative w-16 h-16 rounded-xl object-cover group-hover:scale-105 transition-transform duration-300"
-										height={64}
+										className="w-16 h-[90px] rounded-lg object-cover group-hover:scale-105 transition-transform duration-300"
+										height={90}
 										src={book.cover_image || '/placeholder-book.jpg'}
 										width={64}
 									/>
-									{/* Ranking badge */}
-									<div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
-										<span className="text-xs font-bold text-white">
-											{index + 1}
-										</span>
-									</div>
 								</div>
 
 								{/* Book info */}
 								<div className="flex-1 min-w-0">
-									<div
-										className="font-semibold text-sm text-white truncate group-hover:text-purple-200 transition-colors cursor-pointer"
-										onClick={() => handleBookClick(book.slug)}
-									>
+									<h3 className="font-semibold text-white text-sm truncate transition-colors">
 										{book.title}
-									</div>
-									<div className="flex items-center space-x-4 mt-2">
-										<div className="flex items-center space-x-1 text-xs text-white/70">
-											<i className="fas fa-eye text-blue-300"></i>
-											<span>{book.view}</span>
+									</h3>
+									<div className="flex items-center space-x-2 mt-1">
+										{/* Book type icon and text */}
+										<div className="flex items-center space-x-1 text-xs text-white">
+											{book.book_type === 'ebook' ? (
+												<>
+													<CheckCircle className="w-3 h-3" />
+													<span>Sách điện tử</span>
+												</>
+											) : (
+												<>
+													<FileText className="w-3 h-3" />
+													<span>Sách vật lý</span>
+												</>
+											)}
 										</div>
-										<div className="flex items-center space-x-1 text-xs text-white/70">
-											<i className="fas fa-book text-pink-300"></i>
-											<span>{book.page_count}</span>
-										</div>
 									</div>
-									<div className="text-xs text-white/50 mt-1 truncate">
+									<div className="text-xs text-white mt-1 truncate">
+										Thể loại:{' '}
 										{book.mainCategory?.name ||
 											book.category?.category_name ||
 											'Chưa phân loại'}
-									</div>
-								</div>
-
-								{/* Arrow indicator */}
-								<div className="flex-shrink-0">
-									<div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-										<i className="fas fa-chevron-right text-white/60 text-xs group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
 									</div>
 								</div>
 							</div>

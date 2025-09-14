@@ -110,11 +110,11 @@ const Header: React.FC = () => {
 					</Link>
 					<Link
 						className={`transition-colors ${
-							pathname.startsWith('/books')
+							pathname.startsWith('/book-types')
 								? 'text-[#00B14F]'
 								: 'text-gray-700 hover:text-[#00B14F]'
 						}`}
-						href="/books"
+						href="/book-types"
 					>
 						Tài liệu
 					</Link>

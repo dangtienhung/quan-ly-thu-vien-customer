@@ -3,9 +3,9 @@
 import { ChevronLeft, ChevronRight, Eye, Heart } from 'lucide-react';
 import React, { useRef } from 'react';
 
+import { useIncrementBookView } from '@/hooks/books';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useIncrementBookView } from '@/hooks/books';
 
 interface Book {
 	title: string;
@@ -167,7 +167,7 @@ const BookSection: React.FC<BookSectionProps> = ({
 									type="button"
 									aria-label="Scroll left"
 									onClick={() => scrollByAmount('left')}
-									className="flex absolute -left-4 top-[40%] z-10 w-8 h-8 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-lg border border-gray-200 hover:bg-white hover:shadow-xl transition"
+									className="flex absolute -left-4 top-[40%] z-10 !w-8 !h-8 items-center !rounded-full justify-center rounded-full bg-white/90 text-gray-700 shadow-lg border border-gray-200 hover:bg-white hover:shadow-xl transition"
 								>
 									<ChevronLeft className="w-4 h-4" />
 								</button>
@@ -175,7 +175,7 @@ const BookSection: React.FC<BookSectionProps> = ({
 									type="button"
 									aria-label="Scroll right"
 									onClick={() => scrollByAmount('right')}
-									className="flex absolute -right-4 top-[40%] z-10 w-8 h-8 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-lg border border-gray-200 hover:bg-white hover:shadow-xl transition"
+									className="flex absolute -right-4 top-[40%] z-10 !w-8 !h-8 items-center !rounded-full justify-center rounded-full bg-white/90 text-gray-700 shadow-lg border border-gray-200 hover:bg-white hover:shadow-xl transition"
 								>
 									<ChevronRight className="w-4 h-4" />
 								</button>
