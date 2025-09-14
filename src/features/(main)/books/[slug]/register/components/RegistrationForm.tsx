@@ -90,13 +90,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 							id="borrowDate"
 							value={borrowDate}
 							onChange={(e) => setBorrowDate(e.target.value)}
-							className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+							className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 border-none outline-none disabled:cursor-not-allowed"
 							min={(() => {
 								const tomorrow = new Date();
 								tomorrow.setDate(tomorrow.getDate() + 1);
 								return tomorrow.toISOString().split('T')[0];
 							})()}
 							required
+							disabled
 						/>
 					</div>
 					<p className="text-sm text-gray-500 mt-1">
