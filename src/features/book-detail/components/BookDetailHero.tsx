@@ -1,9 +1,14 @@
 'use client';
 
+import {
+	useCreateReadingHistory,
+	useReadingHistoryByReaderAndBook,
+} from '@/hooks/reading-history';
 import { Book, BookOpen, Eye, User } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
+import { useReaderByUserId } from '@/hooks/readers';
 import { useAuthStore } from '@/stores/auth-store';
 import type { BookWithAuthors } from '@/types/books';
 import Image from 'next/image';
@@ -32,10 +37,20 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 	const params = useParams();
 	const slug = params.slug as string;
 
-	const { isAuthenticated } = useAuthStore();
+	const { isAuthenticated, user } = useAuthStore();
 	const router = useRouter();
 
-	const handleReadBook = () => {
+	// Get reader info by user ID
+	const { data: reader } = useReaderByUserId(user?.id || '');
+
+	// Reading History hooks
+	const createReadingHistoryMutation = useCreateReadingHistory();
+	const { data: existingReadingHistory } = useReadingHistoryByReaderAndBook(
+		reader?.id || '',
+		book.id
+	);
+
+	const handleReadBook = async () => {
 		if (!isAuthenticated) {
 			// Lưu URL hiện tại vào localStorage để redirect sau khi đăng nhập
 			const currentPath = window.location.pathname;
@@ -51,6 +66,22 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 
 		if (book) {
 			if (book.book_type === 'ebook') {
+				// Tạo hoặc cập nhật lịch sử đọc cho ebook
+				if (reader?.id) {
+					// if (!existingReadingHistory) {
+					// Tạo lịch sử đọc mới nếu chưa có
+					createReadingHistoryMutation.mutate({
+						reader_id: reader.id,
+						book_id: book.id,
+						status: 'reading',
+						current_page: 1,
+						total_reading_time_seconds: 0,
+						is_favorite: false,
+					});
+					// }
+					// Nếu đã có lịch sử đọc, không cần tạo mới, chỉ navigate
+				}
+
 				// Navigate to ebook reading page
 				router.push(`/books/${slug}/view`);
 			} else if (book.book_type === 'physical') {
@@ -148,11 +179,16 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 						<div className="flex items-center space-x-4">
 							<Button
 								onClick={handleReadBook}
-								className="inline-flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-colors"
+								disabled={createReadingHistoryMutation.isPending}
+								className="inline-flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 							>
 								<BookOpen className="w-4 h-4" />
 								<span>
-									{book?.book_type === 'ebook' ? 'ĐỌC SÁCH' : 'ĐẶT MƯỢN'}
+									{createReadingHistoryMutation.isPending
+										? 'ĐANG XỬ LÝ...'
+										: book?.book_type === 'ebook'
+										? 'ĐỌC SÁCH'
+										: 'ĐẶT MƯỢN'}
 								</span>
 							</Button>
 							{/* <Button

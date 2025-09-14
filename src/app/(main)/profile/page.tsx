@@ -12,27 +12,16 @@ import {
 	User,
 	XCircle,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useBorrowRecordsByReader } from '@/hooks/borrow-records';
 import { useReaderByUserId } from '@/hooks/readers';
+import { useReadingHistoryByReader } from '@/hooks/reading-history';
 import { useAuthStore } from '@/stores/auth-store';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-interface ReadingHistory {
-	id: string;
-	book: {
-		id: string;
-		title: string;
-		cover_image?: string;
-		slug: string;
-	};
-	last_read_at: string;
-	progress: number;
-}
 
 interface FavoriteBook {
 	id: string;
@@ -52,11 +41,14 @@ const ProfilePage = () => {
 	const [activeTab, setActiveTab] = useState<
 		'profile' | 'history' | 'favorites' | 'borrowings'
 	>('profile');
-	const [readingHistory, setReadingHistory] = useState<ReadingHistory[]>([]);
-	const [favoriteBooks, setFavoriteBooks] = useState<FavoriteBook[]>([]);
-
 	// Fetch reader data for current user
 	const { data: currentReader } = useReaderByUserId(user?.id || '');
+
+	// Fetch reading history for current reader
+	const { data: readingHistoryData, isLoading: isLoadingReadingHistory } =
+		useReadingHistoryByReader(currentReader?.id || '', { limit: 20 });
+	const readingHistory = readingHistoryData?.data || [];
+	const [favoriteBooks, setFavoriteBooks] = useState<FavoriteBook[]>([]);
 
 	// Fetch borrow records for current reader
 	const { data: borrowRecordsData } = useBorrowRecordsByReader(
@@ -65,11 +57,11 @@ const ProfilePage = () => {
 	);
 
 	// Redirect if not authenticated
-	useEffect(() => {
-		if (!isAuthenticated) {
-			router.push('/');
-		}
-	}, [isAuthenticated, router]);
+	// useEffect(() => {
+	// 	if (!isAuthenticated) {
+	// 		router.push('/');
+	// 	}
+	// }, [isAuthenticated, router]);
 
 	const handleLogout = () => {
 		logout();
@@ -291,7 +283,14 @@ const ProfilePage = () => {
 								<h3 className="text-lg font-semibold text-gray-900 mb-6">
 									Lịch sử đọc sách
 								</h3>
-								{readingHistory.length === 0 ? (
+								{isLoadingReadingHistory ? (
+									<div className="text-center py-12">
+										<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+										<p className="text-gray-500">
+											Đang tải lịch sử đọc sách...
+										</p>
+									</div>
+								) : readingHistory.length === 0 ? (
 									<div className="text-center py-12">
 										<BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
 										<p className="text-gray-500 mb-4">
@@ -307,45 +306,102 @@ const ProfilePage = () => {
 									</div>
 								) : (
 									<div className="space-y-4">
-										{readingHistory.map((item) => (
-											<Link
-												key={item.id}
-												href={`/books/${item.book.slug}`}
-												className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-											>
-												<div className="relative w-16 h-20 rounded overflow-hidden bg-gray-200">
-													{item.book.cover_image ? (
-														<Image
-															alt={item.book.title}
-															className="w-full h-full object-cover"
-															fill
-															src={item.book.cover_image}
-														/>
-													) : (
+										{readingHistory.map((item) => {
+											const progress = item.book?.page_count
+												? Math.round(
+														(item.current_page / item.book.page_count) * 100
+												  )
+												: 0;
+
+											return (
+												<Link
+													key={item.id}
+													href={`/books/${item.book?.slug}`}
+													className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+												>
+													<div className="relative w-16 h-20 rounded overflow-hidden bg-gray-200">
 														<div className="w-full h-full flex items-center justify-center">
-															<Book className="w-6 h-6 text-gray-400" />
+															{/* <Book className="w-6 h-6 text-gray-400" /> */}
+															<Image
+																src={item.book?.cover_image || ''}
+																alt={item.book?.title || ''}
+																width={64}
+																height={96}
+															/>
 														</div>
-													)}
-												</div>
-												<div className="flex-1">
-													<h4 className="font-medium text-gray-900 mb-1">
-														{item.book.title}
-													</h4>
-													<p className="text-sm text-gray-500 mb-2">
-														Đọc lần cuối: {formatDate(item.last_read_at)}
-													</p>
-													<div className="w-full bg-gray-200 rounded-full h-2">
-														<div
-															className="bg-green-600 h-2 rounded-full"
-															style={{ width: `${item.progress}%` }}
-														></div>
 													</div>
-													<p className="text-xs text-gray-500 mt-1">
-														Tiến độ: {item.progress}%
-													</p>
-												</div>
-											</Link>
-										))}
+													<div className="flex-1">
+														<h4 className="font-medium text-gray-900 mb-1">
+															{item.book?.title || 'Không có tiêu đề'}
+														</h4>
+														<p className="text-sm text-gray-500 mb-2">
+															Đọc lần cuối:{' '}
+															{item.last_read_at
+																? formatDate(item.last_read_at.toString())
+																: 'Chưa đọc'}
+														</p>
+														{/* <div className="w-full bg-gray-200 rounded-full h-2">
+															<div
+																className="bg-green-600 h-2 rounded-full"
+																style={{ width: `${Math.min(progress, 100)}%` }}
+															></div>
+														</div> */}
+														{/* <p className="text-xs text-gray-500 mt-1">
+															Tiến độ: {Math.min(progress, 100)}% (
+															{item.current_page}/
+															{item.book?.page_count || 'N/A'} trang)
+														</p>
+														<div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+															<span
+																className={`px-2 py-1 rounded-full text-xs ${
+																	item.status === 'completed'
+																		? 'bg-green-100 text-green-700'
+																		: item.status === 'reading'
+																		? 'bg-blue-100 text-blue-700'
+																		: item.status === 'paused'
+																		? 'bg-yellow-100 text-yellow-700'
+																		: 'bg-gray-100 text-gray-700'
+																}`}
+															>
+																{item.status === 'completed'
+																	? 'Hoàn thành'
+																	: item.status === 'reading'
+																	? 'Đang đọc'
+																	: item.status === 'paused'
+																	? 'Tạm dừng'
+																	: item.status === 'abandoned'
+																	? 'Bỏ dở'
+																	: 'Chưa xác định'}
+															</span>
+															{item.is_favorite && (
+																<span className="flex items-center text-red-500">
+																	<Heart className="w-3 h-3 fill-current mr-1" />
+																	Yêu thích
+																</span>
+															)}
+															{item.total_reading_time_seconds > 0 && (
+																<span className="flex items-center text-blue-500">
+																	<Clock className="w-3 h-3 mr-1" />
+																	{Math.floor(
+																		item.total_reading_time_seconds / 3600
+																	) > 0
+																		? `${Math.floor(
+																				item.total_reading_time_seconds / 3600
+																		  )}h ${Math.floor(
+																				(item.total_reading_time_seconds %
+																					3600) /
+																					60
+																		  )}m`
+																		: `${Math.floor(
+																				item.total_reading_time_seconds / 60
+																		  )}m`}
+																</span>
+															)}
+														</div> */}
+													</div>
+												</Link>
+											);
+										})}
 									</div>
 								)}
 							</div>

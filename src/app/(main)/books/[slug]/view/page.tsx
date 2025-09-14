@@ -47,11 +47,9 @@ const BookReadingPage: React.FC<BookReadingPageProps> = ({ params }) => {
 	const { getFileUrl } = useFileUrl();
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedEBook, setSelectedEBook] = useState<any>(null);
-	console.log('🚀 ~ BookReadingPage ~ selectedEBook:', selectedEBook);
 
 	// Extract ebooks from the response
 	const ebooks = ebooksData?.data || [];
-	console.log('🚀 ~ BookReadingPage ~ ebooks:', ebooks);
 
 	useEffect(() => {
 		if (ebooksLoading) {

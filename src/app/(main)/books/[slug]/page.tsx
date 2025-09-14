@@ -74,9 +74,19 @@ const BookDetailPage = () => {
 			<BookDetailHero book={book} onIncrementView={handleIncrementView} />
 
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
-				<BookIntroduction book={book} />
-				{/* <CommentsSection /> */}
-				<RelatedBooks books={filteredRelatedBooks} />
+				<div className="grid grid-cols-1 gap-6">
+					{/* Main Content */}
+					<div className="lg:col-span-2 space-y-6">
+						<BookIntroduction book={book} />
+						{/* <CommentsSection /> */}
+						<RelatedBooks books={filteredRelatedBooks} />
+					</div>
+
+					{/* Sidebar */}
+					{/* <div className="lg:col-span-1">
+						<ReadingStatusCard book={book} />
+					</div> */}
+				</div>
 			</main>
 		</div>
 	);

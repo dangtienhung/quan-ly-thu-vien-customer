@@ -32,7 +32,6 @@ export function middleware(request: NextRequest) {
 		/^\/books\/[^\/]+\/register$/, // /books/[slug]/register
 		/^\/books\/[^\/]+\/view$/, // /books/[slug]/view
 		/^\/books\/[^\/]+$/, // /books/[slug] - chi tiết sách
-		/^\/profile\/[^\/]+$/, // /profile/[id]
 		/^\/borrow-records\/[^\/]+$/, // /borrow-records/[id]
 		/^\/reservations\/[^\/]+$/, // /reservations/[id]
 	];
@@ -59,10 +58,6 @@ export function middleware(request: NextRequest) {
 	const token = request.cookies.get('token')?.value;
 	console.log('🚀 ~ middleware ~ token:', token);
 	console.log('🚀 ~ middleware ~ hasToken:', !!token);
-	console.log(
-		'🚀 ~ middleware ~ token:',
-		token ? `${token.substring(0, 20)}...` : 'null'
-	);
 
 	// Nếu đang ở private route và không có token -> redirect to login
 	if (isPrivateRoute && !token) {
