@@ -3,15 +3,15 @@
 import { Eye, EyeOff } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
 import { Input } from '@/components/ui/input';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
 import { useLogin } from '@/hooks/auth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 // Form validation schema - giống với LoginDialog
 const loginSchema = z.object({
@@ -48,9 +48,9 @@ export default function LoginPage() {
 				} else {
 					// Nếu không có URL redirect, về trang chủ
 					router.push('/');
-					setTimeout(() => {
-						window.location.href = '/';
-					}, 1000);
+					// setTimeout(() => {
+					// 	window.location.href = '/';
+					// }, 1000);
 				}
 				// Reset form
 				form.reset();
@@ -76,7 +76,6 @@ export default function LoginPage() {
 					<div className="text-center mb-8">
 						<div className="flex justify-center mb-4">
 							<Image
-								// src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/537695210_1304240211495265_2418224581590370134_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=s2YVIhCZtSEQ7kNvwF2V05z&_nc_oc=AdmTeXWyuOiTxuQTzxwXlQcU-M6sIcHWgkbvWEmUgit6uGB4sNQZXZaFfVPMOOZdW04&_nc_zt=23&_nc_ht=scontent.fhan14-2.fna&_nc_gid=o8UOvFxQybsrwwYbR7UjjA&oh=00_AfVLGvH1B12OlfzIL21mqS4sbh6CIUYlFZY00E5Mrt5Cjw&oe=68AF11CD"
 								src="/logo.jpg"
 								alt="Logo trường THPT Hoài Đức A"
 								width={80}
@@ -169,7 +168,7 @@ export default function LoginPage() {
 					<div className="text-center mt-4">
 						<Link
 							href="/forgot-password"
-							className="text-sm text-blue-600 hover:text-blue-800 underline"
+							className="text-sm text-primary hover:text-primary/80 underline"
 						>
 							Quên mật khẩu?
 						</Link>

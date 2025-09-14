@@ -1,8 +1,8 @@
+import { LoginRequest, UserRole } from '@/types/auth';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { authApi } from '@/apis/auth';
 import { useAuthStore } from '@/stores/auth-store';
-import { LoginRequest } from '@/types/auth';
 
 export const useAuth = () => {
 	const { token, user, isAuthenticated, login, logout } = useAuthStore();
@@ -17,8 +17,44 @@ export const useAuth = () => {
 			// Sau đó lấy thông tin user
 			try {
 				const user = await authApi.getCurrentUser(data.access_token);
+
+				// Kiểm tra nếu user có role admin
+				if (user.role === UserRole.ADMIN) {
+					console.log('🚫 Admin user detected, logging out...');
+
+					// Xóa token và user data ngay lập tức
+					logout();
+
+					// Xóa thêm localStorage và cookie để đảm bảo
+					if (typeof window !== 'undefined') {
+						localStorage.removeItem('auth-storage');
+						localStorage.removeItem('redirectAfterLogin');
+
+						// Xóa cookie token
+						document.cookie =
+							'token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
+						document.cookie =
+							'token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=' +
+							window.location.hostname +
+							';';
+						document.cookie =
+							'token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.' +
+							window.location.hostname +
+							';';
+					}
+
+					// Throw error để prevent login
+					throw new Error(
+						'Tài khoản admin không thể đăng nhập vào ứng dụng khách hàng. Vui lòng sử dụng tài khoản độc giả.'
+					);
+				}
+
 				useAuthStore.getState().setUser(user);
 			} catch (error) {
+				// Nếu là admin error, re-throw để UI hiển thị
+				if (error instanceof Error && error.message.includes('admin')) {
+					throw error;
+				}
 				console.error('Failed to get user info:', error);
 			}
 		},

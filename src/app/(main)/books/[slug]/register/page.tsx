@@ -10,9 +10,7 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { borrowRecordsApi } from '@/apis/borrow-records';
 import { physicalCopiesApi } from '@/apis/physical-copies';
-import { RouteDebug } from '@/components/debug/route-debug';
 import { RegisterLibraryCardDialog } from '@/components/register-library-card-dialog';
 import { useBorrowRecordsByStatus } from '@/hooks';
 import { useBookBySlug } from '@/hooks/books';
@@ -58,20 +56,6 @@ const PhysicalBookRegistrationPage = () => {
 
 	// Form state
 	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	// Check if user is authenticated - với delay để tránh timing issue
-	useEffect(() => {
-		// Chỉ redirect sau một delay nhỏ để đảm bảo auth state đã được restore
-		const timer = setTimeout(() => {
-			if (!isAuthenticated && user === null) {
-				console.log('🔒 No authentication detected, redirecting to login');
-				toast.error('Bạn cần đăng nhập để mượn sách');
-				router.push('/login');
-			}
-		}, 100); // 100ms delay
-
-		return () => clearTimeout(timer);
-	}, [isAuthenticated, user, router]);
 
 	// Check if book is physical
 	useEffect(() => {
@@ -199,19 +183,19 @@ const PhysicalBookRegistrationPage = () => {
 						console.log('🚀 ~ handleSubmit ~ response:', response);
 
 						// Payload create borrow record
-						const payload = {
-							reader_id: currentReader.id,
-							copy_id: availableCopy.id,
-							borrow_date: borrowDate,
-							due_date: dueDate,
-							status: 'pending_approval' as const,
-							librarian_id: user?.id || '', // Hoặc ID của librarian hiện tại
-							borrow_notes: `Mượn sách từ đặt trước: ${book.title}`,
-							renewal_count: 0,
-						};
+						// const payload = {
+						// 	reader_id: currentReader.id,
+						// 	copy_id: availableCopy.id,
+						// 	borrow_date: borrowDate,
+						// 	due_date: dueDate,
+						// 	status: 'pending_approval' as const,
+						// 	librarian_id: user?.id || '', // Hoặc ID của librarian hiện tại
+						// 	borrow_notes: `Mượn sách từ đặt trước: ${book.title}`,
+						// 	renewal_count: 0,
+						// };
 
 						try {
-							await borrowRecordsApi.create(payload);
+							// await borrowRecordsApi.create(payload);
 							// Update physical copy status to 'borrowed'
 							const payloadUpdateStatusPhysicalCopy = {
 								status: 'borrowed',
@@ -250,7 +234,6 @@ const PhysicalBookRegistrationPage = () => {
 
 	return (
 		<div className="min-h-screen bg-gray-50">
-			<RouteDebug />
 			<div className="max-w-7xl mx-auto px-4 py-8">
 				<PageHeader bookSlug={slug} />
 

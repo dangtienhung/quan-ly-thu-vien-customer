@@ -17,29 +17,28 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 	onSubmit,
 	isSubmitting,
 }) => {
-	// Calculate expected borrow date (default today)
+	// Calculate expected borrow date (default today + 1 day)
 	const [borrowDate, setBorrowDate] = useState(() => {
-		return new Date().toISOString().split('T')[0];
+		const date = new Date();
+		date.setDate(date.getDate() + 1); // Ngày đặt + 1 ngày
+		return date.toISOString().split('T')[0];
 	});
 
 	// Calculate expected due date based on borrow date and reader type
 	const [dueDate, setDueDate] = useState(() => {
 		const date = new Date();
-		const durationDays = currentReader.readerType?.borrowDurationDays || 14;
-		date.setDate(date.getDate() + durationDays);
+		date.setDate(date.getDate() + 2); // Ngày đặt + 2 ngày (ngày mượn + 1 ngày)
 		return date.toISOString().split('T')[0];
 	});
 
 	// Update due date when borrow date changes
 	useEffect(() => {
-		if (borrowDate && currentReader.readerType?.borrowDurationDays) {
+		if (borrowDate) {
 			const date = new Date(borrowDate);
-			date.setDate(
-				date.getDate() + currentReader.readerType.borrowDurationDays
-			);
+			date.setDate(date.getDate() + 1); // Ngày mượn + 1 ngày = ngày lấy sách
 			setDueDate(date.toISOString().split('T')[0]);
 		}
-	}, [borrowDate, currentReader.readerType?.borrowDurationDays]);
+	}, [borrowDate]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -92,12 +91,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 							value={borrowDate}
 							onChange={(e) => setBorrowDate(e.target.value)}
 							className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-							min={new Date().toISOString().split('T')[0]}
+							min={(() => {
+								const tomorrow = new Date();
+								tomorrow.setDate(tomorrow.getDate() + 1);
+								return tomorrow.toISOString().split('T')[0];
+							})()}
 							required
 						/>
 					</div>
 					<p className="text-sm text-gray-500 mt-1">
-						Ngày bạn muốn mượn sách (tối thiểu từ hôm nay đến ngày sau hôm đó)
+						Ngày bạn muốn mượn sách (tối thiểu từ ngày mai trở đi)
 					</p>
 				</div>
 
@@ -113,11 +116,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 						</span>
 					</div>
 					<p className="text-sm text-gray-500 mt-1">
-						Thời gian mượn:{' '}
-						<span className="font-medium text-blue-600">
-							{currentReader.readerType?.borrowDurationDays || 14} ngày
-						</span>{' '}
-						(từ {new Date(borrowDate).toLocaleDateString('vi-VN')} đến{' '}
+						Ngày lấy sách sẽ là ngày mượn sách + 1 ngày (từ{' '}
+						{new Date(borrowDate).toLocaleDateString('vi-VN')} đến{' '}
 						{new Date(dueDate).toLocaleDateString('vi-VN')})
 					</p>
 				</div>
@@ -128,23 +128,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 						Thông tin đặt trước:
 					</h4>
 					<ul className="text-sm text-blue-700 space-y-1">
-						<li>
-							• Đặt trước có hiệu lực trong{' '}
-							{currentReader.readerType?.borrowDurationDays || 14} ngày kể từ
-							ngày đặt
-						</li>
+						<li>• Đặt trước có hiệu lực trong 1 ngày kể từ ngày đặt</li>
 						<li>
 							• Khi có sách sẵn, thư viện sẽ thông báo qua email hoặc điện thoại
 						</li>
 						<li>• Bạn có thể hủy đặt trước bất cứ lúc nào trong tài khoản</li>
-						<li>
-							• Đặt trước sẽ tự động hết hạn sau{' '}
-							{currentReader.readerType?.borrowDurationDays || 14} ngày nếu
-							không có sách
-						</li>
-						{/* <li>
-							• Sau khi nhận thông báo, bạn có 3 ngày để đến thư viện mượn sách
-						</li> */}
+						<li>• Đặt trước sẽ tự động hết hạn sau 1 ngày nếu không có sách</li>
+						<li>• Sau khi đặt trước, bạn có thể mượn sách từ ngày hôm sau</li>
 					</ul>
 				</div>
 
@@ -178,7 +168,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 					<button
 						type="submit"
 						disabled={isSubmitting}
-						className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						className="px-6 py-3 text-white rounded-lg bg-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 					>
 						{isSubmitting ? 'Đang xử lý...' : 'Đặt trước sách'}
 					</button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Book, BookOpen, Eye, Heart, User } from 'lucide-react';
+import { Book, BookOpen, Eye, User } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -117,10 +117,10 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 								<Eye className="w-4 h-4" />
 								<span>{formatViewCount(book.view)} lượt xem</span>
 							</div>
-							<div className="flex items-center space-x-2">
+							{/* <div className="flex items-center space-x-2">
 								<Heart className="w-4 h-4" />
 								<span>chưa có người yêu thích</span>
-							</div>
+							</div> */}
 						</div>
 
 						{/* Authors */}
@@ -155,14 +155,14 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
 									{book?.book_type === 'ebook' ? 'ĐỌC SÁCH' : 'ĐẶT MƯỢN'}
 								</span>
 							</Button>
-							<Button
+							{/* <Button
 								variant="ghost"
 								size="sm"
 								aria-label="Add to favorites"
 								className="text-white hover:text-red-400 hover:bg-white/10 transition-colors p-2"
 							>
 								<Heart className="w-6 h-6" />
-							</Button>
+							</Button> */}
 						</div>
 					</div>
 				</div>

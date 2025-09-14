@@ -9,7 +9,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ bookSlug }) => {
 		<div className="mb-8">
 			<Link
 				href={`/books/${bookSlug}`}
-				className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4"
+				className="inline-flex items-center text-primary hover:text-primary/80 mb-4"
 			>
 				← Quay lại trang chi tiết sách
 			</Link>
