@@ -87,6 +87,7 @@ export interface ReservationsResponse {
 export interface ReservationsQueryParams {
 	page?: number;
 	limit?: number;
+	reservationStatus?: ReservationStatus;
 }
 
 export interface SearchReservationsParams {

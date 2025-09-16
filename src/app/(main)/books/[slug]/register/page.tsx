@@ -7,20 +7,23 @@ import {
 	PageHeader,
 	RegistrationForm,
 } from '@/features/(main)/books/[slug]/register/components';
-import { useParams, useRouter } from 'next/navigation';
+import {
+	useCreateReservation,
+	useReservationsByReader,
+} from '@/hooks/reservations';
 import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 
-import { physicalCopiesApi } from '@/apis/physical-copies';
 import { RegisterLibraryCardDialog } from '@/components/register-library-card-dialog';
-import { useBorrowRecordsByStatus } from '@/hooks';
-import { useBookBySlug } from '@/hooks/books';
-import { useAvailablePhysicalCopiesByBook } from '@/hooks/physical-copies';
-import { useReaderByUserId } from '@/hooks/readers';
-import { useCreateReservation } from '@/hooks/reservations';
-import { useAuthStore } from '@/stores/auth-store';
-import { useQueryClient } from '@tanstack/react-query';
 import { User } from 'lucide-react';
+import { physicalCopiesApi } from '@/apis/physical-copies';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/auth-store';
+import { useAvailablePhysicalCopiesByBook } from '@/hooks/physical-copies';
+import { useBookBySlug } from '@/hooks/books';
+import { useBorrowRecordsByStatus } from '@/hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { useReaderByUserId } from '@/hooks/readers';
 
 const PhysicalBookRegistrationPage = () => {
 	const params = useParams();
@@ -39,6 +42,16 @@ const PhysicalBookRegistrationPage = () => {
 	// Fetch reader data for current user
 	const { data: currentReader } = useReaderByUserId(user?.id || '');
 
+	// lấy ra độc giả đã đặt trước sách
+	const { data: reservations } = useReservationsByReader(
+		currentReader?.id || '',
+		{
+			page: 1,
+			limit: 100,
+			reservationStatus: 'pending',
+		}
+	);
+
 	// Fetch available physical copies for this book
 	const { data: availableCopies } = useAvailablePhysicalCopiesByBook(
 		book?.id || ''
@@ -47,7 +60,7 @@ const PhysicalBookRegistrationPage = () => {
 	// Fetch borrow records for current reader
 	const { data: borrowRecords } = useBorrowRecordsByStatus('borrowed', {
 		page: 1,
-		limit: 2,
+		limit: currentReader?.readerType?.maxBorrowLimit,
 	});
 	const borrowRecordsData = borrowRecords?.data;
 
@@ -142,7 +155,7 @@ const PhysicalBookRegistrationPage = () => {
 	const handleSubmit = async (borrowDate: string, dueDate: string) => {
 		if (!currentReader || !book) return;
 
-		// Check if there are available copies
+		// Kiểm tra xem có sách sẵn sàng để mượn không
 		if (!availableCopies?.data || availableCopies.data.length === 0) {
 			toast.error('Hiện tại không có sách sẵn sàng để mượn');
 			return;
@@ -150,19 +163,32 @@ const PhysicalBookRegistrationPage = () => {
 
 		const availableCopy = availableCopies?.data?.[0];
 
-		setIsSubmitting(true);
+		// Kiểm tra xem độc giả đã (đặt trước sách và mượn sách) tổng đã bằng tối đa chưa
+		if (
+			reservations?.data &&
+			reservations.data.length >=
+				(currentReader?.readerType?.maxBorrowLimit +
+					(borrowRecordsData?.length || 0) || 0)
+		) {
+			toast.error(
+				'Bạn đã mượn sách tối đa. Vui lòng trả sách để có thể mượn sách tiếp.'
+			);
+			return;
+		}
 
 		try {
+			setIsSubmitting(true);
+
 			// Calculate reservation expiry date (2 days from now - ngày hôm đó + 1 ngày nữa)
 			const reservationDate = new Date();
 			const expiryDate = new Date();
 			expiryDate.setDate(expiryDate.getDate() + 1); // 2 days from now
 
-			// Check if the reader has already borrowed 2 books
-			if (borrowRecordsData && borrowRecordsData.length >= 2) {
-				toast.error('Bạn đã mượn tối đa 2 sách');
-				return;
-			}
+			// Kiểm tra xem độc giả đã mượn tối đa chưa
+			// if (borrowRecordsData && borrowRecordsData.length >= currentReader?.readerType?.maxBorrowLimit) {
+			// 	toast.error('Bạn đã mượn tối đa 2 sách');
+			// 	return;
+			// }
 
 			await createReservation.mutateAsync(
 				{
@@ -182,23 +208,11 @@ const PhysicalBookRegistrationPage = () => {
 					onSuccess: async (response) => {
 						console.log('🚀 ~ handleSubmit ~ response:', response);
 
-						// Payload create borrow record
-						// const payload = {
-						// 	reader_id: currentReader.id,
-						// 	copy_id: availableCopy.id,
-						// 	borrow_date: borrowDate,
-						// 	due_date: dueDate,
-						// 	status: 'pending_approval' as const,
-						// 	librarian_id: user?.id || '', // Hoặc ID của librarian hiện tại
-						// 	borrow_notes: `Mượn sách từ đặt trước: ${book.title}`,
-						// 	renewal_count: 0,
-						// };
-
 						try {
 							// await borrowRecordsApi.create(payload);
-							// Update physical copy status to 'borrowed'
+							// Update physical copy status to 'reserved'
 							const payloadUpdateStatusPhysicalCopy = {
-								status: 'borrowed',
+								status: 'reserved',
 								notes: `Mượn sách từ đặt trước: ${book.title} - Độc giả: ${currentReader.fullName}`,
 							};
 							await physicalCopiesApi.updatePhysicalCopyStatus(
