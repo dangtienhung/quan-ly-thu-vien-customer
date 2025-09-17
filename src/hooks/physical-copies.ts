@@ -1,4 +1,3 @@
-import { physicalCopiesApi } from '@/apis/physical-copies';
 import type {
 	CreatePhysicalCopyDto,
 	PhysicalCopiesQueryParams,
@@ -6,6 +5,8 @@ import type {
 	UpdatePhysicalCopyDto,
 } from '@/types/physical-copies';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { physicalCopiesApi } from '@/apis/physical-copies';
 
 // Query keys
 export const physicalCopyKeys = {
@@ -70,7 +71,6 @@ export const useAvailablePhysicalCopiesByBook = (
 		queryKey: physicalCopyKeys.availableByBook(bookId, params),
 		queryFn: () =>
 			physicalCopiesApi.getAvailablePhysicalCopiesByBook(bookId, params),
-		staleTime: 2 * 60 * 1000, // 2 minutes - shorter cache for available copies
 		enabled: !!bookId,
 	});
 };

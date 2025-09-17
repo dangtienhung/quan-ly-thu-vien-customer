@@ -1,4 +1,3 @@
-import { borrowRecordsApi } from '@/apis/borrow-records';
 import type {
 	ApproveBorrowRecordDto,
 	BorrowRecordsQueryParams,
@@ -10,6 +9,8 @@ import type {
 	UpdateBorrowRecordDto,
 } from '@/types/borrow-records';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { borrowRecordsApi } from '@/apis/borrow-records';
 
 // Query keys
 export const borrowRecordKeys = {
@@ -57,7 +58,6 @@ export const useBorrowRecordsByStatus = (
 	return useQuery({
 		queryKey: borrowRecordKeys.byStatus(status, params),
 		queryFn: () => borrowRecordsApi.getBorrowRecordsByStatus(status, params),
-		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
 };
 

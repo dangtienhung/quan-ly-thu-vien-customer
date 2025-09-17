@@ -48,7 +48,7 @@ const PhysicalBookRegistrationPage = () => {
 		{
 			page: 1,
 			limit: 100,
-			reservationStatus: 'pending',
+			status: 'pending',
 		}
 	);
 
@@ -60,9 +60,35 @@ const PhysicalBookRegistrationPage = () => {
 	// Fetch borrow records for current reader
 	const { data: borrowRecords } = useBorrowRecordsByStatus('borrowed', {
 		page: 1,
-		limit: currentReader?.readerType?.maxBorrowLimit,
+		limit: 100,
 	});
 	const borrowRecordsData = borrowRecords?.data;
+
+	// lấy ra số lượng sách đã gia hạn
+	const { data: renewedRecords } = useBorrowRecordsByStatus('renewed', {
+		page: 1,
+		limit: 100,
+	});
+	const renewedRecordsData = renewedRecords?.data;
+
+	// lấy ra số lượng sách quá hạn
+	const { data: overdueRecords } = useBorrowRecordsByStatus('overdue', {
+		page: 1,
+		limit: 100,
+	});
+	const overdueRecordsData = overdueRecords?.data;
+
+	// tính tổng số lượng sách đã mượn
+	const totalBorrowed =
+		(borrowRecordsData?.length || 0) +
+		(renewedRecordsData?.length || 0) +
+		(overdueRecordsData?.length || 0) +
+		(reservations?.data?.length || 0);
+
+	console.log(
+		'🚀 ~ PhysicalBookRegistrationPage ~ totalBorrowed:',
+		totalBorrowed
+	);
 
 	// Create reservation mutation
 	const createReservation = useCreateReservation();
@@ -164,12 +190,7 @@ const PhysicalBookRegistrationPage = () => {
 		const availableCopy = availableCopies?.data?.[0];
 
 		// Kiểm tra xem độc giả đã (đặt trước sách và mượn sách) tổng đã bằng tối đa chưa
-		if (
-			reservations?.data &&
-			reservations.data.length >=
-				(currentReader?.readerType?.maxBorrowLimit +
-					(borrowRecordsData?.length || 0) || 0)
-		) {
+		if (totalBorrowed >= currentReader?.readerType?.maxBorrowLimit) {
 			toast.error(
 				'Bạn đã mượn sách tối đa. Vui lòng trả sách để có thể mượn sách tiếp.'
 			);
@@ -235,7 +256,6 @@ const PhysicalBookRegistrationPage = () => {
 
 			router.push(`/books/${slug}`);
 		} catch (error) {
-			console.log('🚀 ~ handleSubmit ~ error:', error);
 			const message =
 				error instanceof Error
 					? (error as any)?.response?.data?.message

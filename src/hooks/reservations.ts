@@ -71,7 +71,6 @@ export const useReservationsByReader = (
 	return useQuery({
 		queryKey: reservationKeys.byReader(readerId, params),
 		queryFn: () => reservationsApi.getReservationsByReader(readerId, params),
-		staleTime: 5 * 60 * 1000, // 5 minutes
 		enabled: !!readerId,
 	});
 };

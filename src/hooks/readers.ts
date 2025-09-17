@@ -102,7 +102,6 @@ export const useReaderByUserId = (userId: string) => {
 	return useQuery({
 		queryKey: readerKeys.byUserId(userId),
 		queryFn: () => readersApi.getReaderByUserId(userId),
-		staleTime: 10 * 60 * 1000, // 10 minutes
 		enabled: !!userId,
 	});
 };
