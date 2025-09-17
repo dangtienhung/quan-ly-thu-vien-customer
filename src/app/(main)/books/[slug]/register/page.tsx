@@ -85,11 +85,6 @@ const PhysicalBookRegistrationPage = () => {
 		(overdueRecordsData?.length || 0) +
 		(reservations?.data?.length || 0);
 
-	console.log(
-		'🚀 ~ PhysicalBookRegistrationPage ~ totalBorrowed:',
-		totalBorrowed
-	);
-
 	// Create reservation mutation
 	const createReservation = useCreateReservation();
 
