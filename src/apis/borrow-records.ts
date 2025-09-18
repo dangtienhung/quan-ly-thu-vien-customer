@@ -58,10 +58,6 @@ export const borrowRecordsApi = {
 		status: string,
 		params: BorrowRecordsQueryParams = {}
 	): Promise<BorrowRecordsResponse> => {
-		const queryParams = new URLSearchParams();
-		if (params.page) queryParams.append('page', params.page.toString());
-		if (params.limit) queryParams.append('limit', params.limit.toString());
-
 		const response = await instance.get(`/borrow-records/status/${status}`, {
 			params,
 		});

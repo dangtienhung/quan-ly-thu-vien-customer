@@ -11,19 +11,19 @@ import {
 	useCreateReservation,
 	useReservationsByReader,
 } from '@/hooks/reservations';
-import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { RegisterLibraryCardDialog } from '@/components/register-library-card-dialog';
-import { User } from 'lucide-react';
 import { physicalCopiesApi } from '@/apis/physical-copies';
-import { toast } from 'sonner';
-import { useAuthStore } from '@/stores/auth-store';
-import { useAvailablePhysicalCopiesByBook } from '@/hooks/physical-copies';
-import { useBookBySlug } from '@/hooks/books';
+import { RegisterLibraryCardDialog } from '@/components/register-library-card-dialog';
 import { useBorrowRecordsByStatus } from '@/hooks';
-import { useQueryClient } from '@tanstack/react-query';
+import { useBookBySlug } from '@/hooks/books';
+import { useAvailablePhysicalCopiesByBook } from '@/hooks/physical-copies';
 import { useReaderByUserId } from '@/hooks/readers';
+import { useAuthStore } from '@/stores/auth-store';
+import { useQueryClient } from '@tanstack/react-query';
+import { User } from 'lucide-react';
+import { toast } from 'sonner';
 
 const PhysicalBookRegistrationPage = () => {
 	const params = useParams();
@@ -51,6 +51,10 @@ const PhysicalBookRegistrationPage = () => {
 			status: 'pending',
 		}
 	);
+	console.log(
+		'🚀 ~ PhysicalBookRegistrationPage ~ reservations:',
+		reservations
+	);
 
 	// Fetch available physical copies for this book
 	const { data: availableCopies } = useAvailablePhysicalCopiesByBook(
@@ -58,24 +62,43 @@ const PhysicalBookRegistrationPage = () => {
 	);
 
 	// Fetch borrow records for current reader
-	const { data: borrowRecords } = useBorrowRecordsByStatus('borrowed', {
-		page: 1,
-		limit: 100,
-	});
+	const { data: borrowRecords } = useBorrowRecordsByStatus(
+		'borrowed',
+		{
+			page: 1,
+			limit: 100,
+			readerId: currentReader?.id || '',
+		},
+		!!currentReader?.id
+	);
 	const borrowRecordsData = borrowRecords?.data;
 
 	// lấy ra số lượng sách đã gia hạn
-	const { data: renewedRecords } = useBorrowRecordsByStatus('renewed', {
-		page: 1,
-		limit: 100,
-	});
+	const { data: renewedRecords } = useBorrowRecordsByStatus(
+		'renewed',
+		{
+			page: 1,
+			limit: 100,
+			readerId: currentReader?.id || '',
+		},
+		!!currentReader?.id
+	);
 	const renewedRecordsData = renewedRecords?.data;
+	console.log(
+		'🚀 ~ PhysicalBookRegistrationPage ~ renewedRecordsData:',
+		renewedRecordsData
+	);
 
 	// lấy ra số lượng sách quá hạn
-	const { data: overdueRecords } = useBorrowRecordsByStatus('overdue', {
-		page: 1,
-		limit: 100,
-	});
+	const { data: overdueRecords } = useBorrowRecordsByStatus(
+		'overdue',
+		{
+			page: 1,
+			limit: 100,
+			readerId: currentReader?.id || '',
+		},
+		!!currentReader?.id
+	);
 	const overdueRecordsData = overdueRecords?.data;
 
 	// tính tổng số lượng sách đã mượn
@@ -84,6 +107,10 @@ const PhysicalBookRegistrationPage = () => {
 		(renewedRecordsData?.length || 0) +
 		(overdueRecordsData?.length || 0) +
 		(reservations?.data?.length || 0);
+	console.log(
+		'🚀 ~ PhysicalBookRegistrationPage ~ totalBorrowed:',
+		totalBorrowed
+	);
 
 	// Create reservation mutation
 	const createReservation = useCreateReservation();

@@ -53,11 +53,13 @@ export const useSearchBorrowRecords = (params: SearchBorrowRecordsParams) => {
 
 export const useBorrowRecordsByStatus = (
 	status: string,
-	params: BorrowRecordsQueryParams = {}
+	params: BorrowRecordsQueryParams = {},
+	enabled = true
 ) => {
 	return useQuery({
 		queryKey: borrowRecordKeys.byStatus(status, params),
 		queryFn: () => borrowRecordsApi.getBorrowRecordsByStatus(status, params),
+		enabled,
 	});
 };
 

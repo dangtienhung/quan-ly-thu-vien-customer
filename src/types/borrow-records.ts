@@ -76,6 +76,7 @@ export interface BorrowRecordsResponse {
 export interface BorrowRecordsQueryParams {
 	page?: number;
 	limit?: number;
+	readerId?: string;
 }
 
 export interface SearchBorrowRecordsParams {
